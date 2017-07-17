@@ -53,7 +53,7 @@ public class PlayerEventHandler {
 				// record the player's Y motion
 				double playerMotion = player.motionY;
 					if (state.getMaterial() == ModBlocks.FAST_MATERIAL) {
-						FastLadder.log.info("FAST");
+//						FastLadder.log.info("FAST");
 						//moveOnLadder(player);
 						//moveOnLadderDoubleSpeed(player);
 						moveOnLadder(player, FAST_SPEED); // = 1.5x
