@@ -118,8 +118,6 @@ public class FastLadder extends AbstractMod {
         // register the packet handlers
         //network = NetworkRegistry.INSTANCE.newSimpleChannel(FastLadder.modid);
 
-		
-
 	}
 	
 	/**
@@ -153,79 +151,6 @@ public class FastLadder extends AbstractMod {
 		latestVersion = VersionChecker.getVersion(VERSION_URL, MINECRAFT_VERSION);
 	}
 	
-	/**
-	 *TODO move to GottschCore
-	 * Add rolling file appender to the current logging system.
-	 */
-	public static void addRollingFileAppenderToLogger(String loggerName, String appenderName,ILoggerConfig modConfig) {
-		// get config properties
-		String loggerLevel = modConfig.getLoggerLevel();
-		String loggerFolder = modConfig.getLoggerFolder();
-		
-		if (!loggerFolder.endsWith("/")) {
-			loggerFolder += "/";
-		}
-
-		final LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
-        final Configuration config = loggerContext.getConfiguration();
-        
-        // create a sized-based trigger policy, using config setting for size.  Default 1000K
-        SizeBasedTriggeringPolicy policy = SizeBasedTriggeringPolicy.createPolicy(modConfig.getLoggerSize());
-        // create the pattern for log statements
-        PatternLayout layout = PatternLayout
-        		.newBuilder()
-        		.withPattern("%d [%t] %p %c | %F:%L | %m%n")
-        		.withAlwaysWriteExceptions(true)
-        		.build();
-        
-        // create a rolling file appender for SGS_Treasure logger (which is used by the Treasure mod)
-        Appender appender = RollingFileAppender
-        		.newBuilder()
-        		.withFileName(loggerFolder + modConfig.getLoggerFilename() + ".log")
-        		.withFilePattern(loggerFolder + modConfig.getLoggerFilename() + "-%d{yyyy-MM-dd-HH_mm_ss}.log")
-        		.withAppend(true)
-        		.withName(appenderName)
-        		.withBufferedIo(true)
-        		.withImmediateFlush(true)
-        		.withPolicy(policy)
-//        		.withStrategy(strategy)
-        		.withLayout(layout)
-//        		.withFilter(filter)
-        		.withIgnoreExceptions(true)
-        		.withAdvertise(false)
-        		.setConfiguration(config)
-        		.build();
-
-        // start the appender
-        appender.start();
-        
-        // add appenders to config
-//        ((BaseConfiguration) config).addAppender(appender);
-        config.addAppender(appender);
-        
-        // create appender references
-        AppenderRef appenderReference = AppenderRef.createAppenderRef(appenderName, null, null);
-        
-        // create logger config
-        AppenderRef[] refs = new AppenderRef[] {appenderReference};
-
-		Level level = Level.getLevel(loggerLevel.toUpperCase());
-		
-        // set the logger name "FastLadder" to use the rolling file appender
-        LoggerConfig loggerConfig = LoggerConfig.createLogger("false", level, loggerName, "true", refs, null, config, null );
-
-        
-        // add appenders to logger config
-        loggerConfig.addAppender(appender, null, null);
-
-        // add loggers to base configuratoin
-//        ((BaseConfiguration) config).addLogger("FastLadder", loggerConfig);
-        config.addLogger(loggerName, loggerConfig);
-        
-        // update existing loggers
-        loggerContext.updateLoggers();	
-	}
-
 	@Override
 	public IConfig getConfig() {
 		return FastLadder.config;
