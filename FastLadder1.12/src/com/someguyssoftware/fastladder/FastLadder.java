@@ -38,7 +38,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 		dependencies="required-after:gottschcore@[1.0.0,)",
 		acceptedMinecraftVersions = "[1.12]",
 		// TODO add a const for update json file, like VERSION_URL
-		updateJSON = "https://gist.github.com/gottsch/3b047726b8124dfa9b5d90d021869843"
+		updateJSON = "https://raw.githubusercontent.com/gottsch/gottsch-minecraft-FastLadder/master/FastLadder1.12/update.json"
 	)
 @Credits(values={"FastLadder! was first developed by Mark Gottschling on December 27, 2016."})
 public class FastLadder extends AbstractMod {
