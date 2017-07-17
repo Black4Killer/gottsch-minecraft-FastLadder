@@ -29,7 +29,6 @@ public class PlayerEventHandler {
 	
 	@SubscribeEvent
 	public void onClimbFastLadder(LivingUpdateEvent event) {
-		FastLadder.log.info("Living event: " + event.getEntity());
 		if (event.getEntity() instanceof EntityPlayer) {
 			// get the player
 			EntityPlayer player = (EntityPlayer) event.getEntity();
@@ -51,13 +50,10 @@ public class PlayerEventHandler {
 			
 			// if on a ladder and the ladder is made from the 'fast' material
 			if (player.isOnLadder()) {
-				FastLadder.log.debug("block material= " + state.getMaterial());
-				System.out.println("block material= " + state.getMaterial());
 				// record the player's Y motion
 				double playerMotion = player.motionY;
 					if (state.getMaterial() == ModBlocks.FAST_MATERIAL) {
 						FastLadder.log.info("FAST");
-						System.out.println("FAST");
 						//moveOnLadder(player);
 						//moveOnLadderDoubleSpeed(player);
 						moveOnLadder(player, FAST_SPEED); // = 1.5x

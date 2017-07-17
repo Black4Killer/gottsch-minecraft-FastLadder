@@ -66,7 +66,8 @@ public class FastLadder extends AbstractMod {
 	public static BuildVersion latestVersion;
 
 	// logger
-	public static Logger log = LogManager.getLogger("FastLadder");
+	private static final String LOGGER_NAME = "FastLadder";
+	public static Logger log = LogManager.getLogger(LOGGER_NAME);
 	
 	@Instance(value=FastLadder.MODID)
 	public static FastLadder instance = new FastLadder();
@@ -112,7 +113,7 @@ public class FastLadder extends AbstractMod {
 		config = new FastLadderConfig(this, event.getModConfigurationDirectory(), FASTLADDER_CONFIG_DIR, "general.cfg");
 				
 		// configure logging
-		configLogging(config);
+		addRollingFileAppenderToLogger(LOGGER_NAME, LOGGER_NAME + "Appender", config);
 		
         // register the packet handlers
         //network = NetworkRegistry.INSTANCE.newSimpleChannel(FastLadder.modid);
@@ -138,6 +139,7 @@ public class FastLadder extends AbstractMod {
 	 */
     @EventHandler
     public void serverStarted(FMLServerStartingEvent event) {
+    	// add a show version command
     	event.registerServerCommand(new ShowVersionCommand(this));
     }
     
@@ -152,14 +154,13 @@ public class FastLadder extends AbstractMod {
 	}
 	
 	/**
+	 *TODO move to GottschCore
 	 * Add rolling file appender to the current logging system.
 	 */
-	public static void configLogging(ILoggerConfig modConfig) {
+	public static void addRollingFileAppenderToLogger(String loggerName, String appenderName,ILoggerConfig modConfig) {
 		// get config properties
 		String loggerLevel = modConfig.getLoggerLevel();
 		String loggerFolder = modConfig.getLoggerFolder();
-		String loggerName = FastLadder.MODID;
-		String appenderName = "FAST_LADDER";
 		
 		if (!loggerFolder.endsWith("/")) {
 			loggerFolder += "/";
@@ -199,6 +200,7 @@ public class FastLadder extends AbstractMod {
         appender.start();
         
         // add appenders to config
+//        ((BaseConfiguration) config).addAppender(appender);
         config.addAppender(appender);
         
         // create appender references
@@ -217,6 +219,7 @@ public class FastLadder extends AbstractMod {
         loggerConfig.addAppender(appender, null, null);
 
         // add loggers to base configuratoin
+//        ((BaseConfiguration) config).addLogger("FastLadder", loggerConfig);
         config.addLogger(loggerName, loggerConfig);
         
         // update existing loggers
