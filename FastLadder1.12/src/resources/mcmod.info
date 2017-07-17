@@ -1,0 +1,17 @@
+[
+{
+  "modid": "fastladder",
+  "name": "FastLadder!",
+  "description": "",
+  "version": "1.0.4",
+  "mcversion": "1.11",
+  "url": "",
+  "updateUrl": "",
+   "authorList":["gottsch"],
+  "credits": "Authored by gottsch",
+  "logoFile": "fastladder.logo.png",
+  "screenshots": [],
+  "requiredMods": ["Forge"],
+  "dependencies": []
+}
+]

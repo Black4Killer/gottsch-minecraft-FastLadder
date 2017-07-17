@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "FastLadder:fastest_ladder" },
+        "facing=east":  { "model": "FastLadder:fastest_ladder", "y": 90 },
+        "facing=south": { "model": "FastLadder:fastest_ladder", "y": 180 },
+        "facing=west":  { "model": "FastLadder:fastest_ladder", "y": 270 }
+    }
+}

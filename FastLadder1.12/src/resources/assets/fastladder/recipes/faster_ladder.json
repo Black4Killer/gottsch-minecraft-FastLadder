@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+	"g g",
+	"sxs",
+	"g g"
+  ],
+  "key": {
+    "g": {
+      "item": "minecraft:gold_ingot"
+    },
+    "s": {
+    	"item": "minecraft:stick"
+    },
+	"x": {
+		"item": "minecraft:glowstone_dust"
+	}
+  },
+  "result": {
+    "item": "fastladder:faster_ladder",
+    "count": 18
+  }
+}
