@@ -38,8 +38,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 		version=FastLadder.VERSION,
 		dependencies="required-after:gottschcore@[1.0.0,)",
 		acceptedMinecraftVersions = "[1.12]",
-		// TODO add a const for update json file, like VERSION_URL
-		updateJSON = "https://raw.githubusercontent.com/gottsch/gottsch-minecraft-FastLadder/master/FastLadder1.12/update.json"
+		updateJSON = FastLadder.UPDATE_JSON_URL
 	)
 @Credits(values={"FastLadder! was first developed by Mark Gottschling on December 27, 2016."})
 public class FastLadder extends AbstractMod {
@@ -47,6 +46,7 @@ public class FastLadder extends AbstractMod {
 	public static final String MODID = "fastladder";
 	public static final String NAME = "FastLadder!";
 	public static final String VERSION = "1.0.4";
+	public static final String UPDATE_JSON_URL = "https://raw.githubusercontent.com/gottsch/gottsch-minecraft-FastLadder/master/FastLadder1.12/update.json";
 	
 	// TODO create BuilderVersion that parses the minecraft forge updatejson file instead of custom format file
 	private static final String VERSION_URL = "https://www.dropbox.com/s/9nftcgodlgsw79u/fastladder-versions.json?dl=1";
@@ -89,8 +89,6 @@ public class FastLadder extends AbstractMod {
 	 */
 	@EventHandler
 	public void preInt(FMLPreInitializationEvent event) {
-		FastLadder.log.info("in preInt.");
-		
 		super.preInt(event);
 		// register additional events
 
@@ -135,8 +133,13 @@ public class FastLadder extends AbstractMod {
      */
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
+		if (!getConfig().isModEnabled()) return;	
+		
+		super.postInit(event);
+		
 		// get the latest version from the website
-		latestVersion = VersionChecker.getVersion(VERSION_URL, MINECRAFT_VERSION);
+		// TODO this is redundant with super.postInit()
+//		latestVersion = VersionChecker.getVersion(VERSION_URL, MINECRAFT_VERSION);
 	}
 	
 	@Override
