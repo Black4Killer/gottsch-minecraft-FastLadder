@@ -51,9 +51,6 @@ public class FastLadder extends AbstractMod {
 	// TODO create BuilderVersion that parses the minecraft forge updatejson file instead of custom format file
 	private static final String VERSION_URL = "https://www.dropbox.com/s/9nftcgodlgsw79u/fastladder-versions.json?dl=1";
 	private static final BuildVersion MINECRAFT_VERSION = new BuildVersion(1, 12, 0);
-	
-	// latest version
-	public static BuildVersion latestVersion;
 
 	// logger
 	private static final String LOGGER_NAME = "FastLadder";
@@ -68,6 +65,10 @@ public class FastLadder extends AbstractMod {
 	private static final String FASTLADDER_CONFIG_DIR = "fastladder";
 	private static FastLadderConfig config;
 	
+	// latest version
+	private static BuildVersion latestVersion;
+
+
 	@SidedProxy(clientSide="com.someguyssoftware.fastladder.proxy.ClientProxy", serverSide="com.someguyssoftware.fastladder.proxy.ServerProxy")
 	public static IProxy proxy;
 		
@@ -75,12 +76,6 @@ public class FastLadder extends AbstractMod {
 	 * 
 	 */
 	public FastLadder() {
-	}
-
-
-	@Override
-	public BuildVersion getModLatestVersion() {
-		return FastLadder.latestVersion;
 	}
 	
 	/**
@@ -134,12 +129,7 @@ public class FastLadder extends AbstractMod {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		if (!getConfig().isModEnabled()) return;	
-		
 		super.postInit(event);
-		
-		// get the latest version from the website
-		// TODO this is redundant with super.postInit()
-//		latestVersion = VersionChecker.getVersion(VERSION_URL, MINECRAFT_VERSION);
 	}
 	
 	@Override
@@ -182,4 +172,13 @@ public class FastLadder extends AbstractMod {
 		return FastLadder.VERSION;
 	}
 
+	@Override
+	public BuildVersion getModLatestVersion() {
+		return latestVersion;
+	}
+
+	@Override
+	public void setModLatestVersion(BuildVersion version) {
+		FastLadder.latestVersion = version;
+	}
 }
