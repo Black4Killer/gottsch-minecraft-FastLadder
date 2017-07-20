@@ -36,7 +36,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 		modid=FastLadder.MODID,
 		name=FastLadder.NAME,
 		version=FastLadder.VERSION,
-		dependencies="required-after:gottschcore@[1.0.0,)",
+		dependencies="required-after:gottschcore@[1.0.1,)",
 		acceptedMinecraftVersions = "[1.12]",
 		updateJSON = FastLadder.UPDATE_JSON_URL
 	)
