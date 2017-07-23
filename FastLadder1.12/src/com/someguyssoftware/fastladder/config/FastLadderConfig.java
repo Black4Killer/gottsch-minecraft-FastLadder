@@ -40,8 +40,7 @@ public class FastLadderConfig extends AbstractConfig {
 		// load the config file
 		Configuration config = super.load(file);
 
-		// TODO add mod specific settings here
-        // enable fastladder settings
+		// add mod specific settings here
         config.setCategoryComment("03-fastladder", "General Fast Ladder! mod properties.");        
               
         // ids
