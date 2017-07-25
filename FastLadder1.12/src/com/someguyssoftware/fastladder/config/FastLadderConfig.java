@@ -17,9 +17,9 @@ import net.minecraftforge.common.config.Configuration;
  */
 public class FastLadderConfig extends AbstractConfig {
 	// ids
-	private String fastLadderBlockId;
-	private String fasterLadderBlockId;
-	private String fastestLadderBlockId;
+	public static String fastLadderBlockId;
+	public static String fasterLadderBlockId;
+	public static String fastestLadderBlockId;
 	
 	/**
 	 * 
@@ -40,8 +40,7 @@ public class FastLadderConfig extends AbstractConfig {
 		// load the config file
 		Configuration config = super.load(file);
 
-		// TODO add mod specific settings here
-        // enable fastladder settings
+		// add mod specific settings here
         config.setCategoryComment("03-fastladder", "General Fast Ladder! mod properties.");        
               
         // ids
@@ -59,17 +58,17 @@ public class FastLadderConfig extends AbstractConfig {
 	}
 
 	public String getFastLadderBlockId() {
-		return fastLadderBlockId;
+		return FastLadderConfig.fastLadderBlockId;
 	}
 
 
 	public String getFasterLadderBlockId() {
-		return fasterLadderBlockId;
+		return FastLadderConfig.fasterLadderBlockId;
 	}
 
 
 	public String getFastestLadderBlockId() {
-		return fastestLadderBlockId;
+		return FastLadderConfig.fastestLadderBlockId;
 	}
 
 }

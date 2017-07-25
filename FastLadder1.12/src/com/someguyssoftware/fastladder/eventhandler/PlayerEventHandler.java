@@ -4,7 +4,7 @@
 package com.someguyssoftware.fastladder.eventhandler;
 
 import com.someguyssoftware.fastladder.FastLadder;
-import com.someguyssoftware.fastladder.block.ModBlocks;
+import com.someguyssoftware.fastladder.block.FastLadderBlocks;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.MoverType;
@@ -52,7 +52,7 @@ public class PlayerEventHandler {
 			if (player.isOnLadder()) {
 				// record the player's Y motion
 				double playerMotion = player.motionY;
-					if (state.getMaterial() == ModBlocks.FAST_MATERIAL) {
+					if (state.getMaterial() == FastLadderBlocks.FAST_MATERIAL) {
 //						FastLadder.log.info("FAST");
 						//moveOnLadder(player);
 						//moveOnLadderDoubleSpeed(player);
@@ -65,13 +65,13 @@ public class PlayerEventHandler {
 						// NOTE this doesn't affect ladder climb speed!
 						//player.capabilities.setPlayerWalkSpeed(player.capabilities.getWalkSpeed() * 2f);
 					}
-					else if (state.getMaterial() == ModBlocks.FASTER_MATERIAL) {
+					else if (state.getMaterial() == FastLadderBlocks.FASTER_MATERIAL) {
 						//FastLadder.log.info("FASTER");
 						moveOnLadder(player, FASTER_SPEED); // = 2x
 						//reset the player's motion
 						player.motionY = playerMotion;
 					}
-					else if (state.getMaterial() == ModBlocks.FASTEST_MATERIAL) {
+					else if (state.getMaterial() == FastLadderBlocks.FASTEST_MATERIAL) {
 						//FastLadder.log.info("FASTEST");
 						moveOnLadder(player, FASTEST_SPEED); // =2.5x
 						//reset the player's motion

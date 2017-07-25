@@ -9,11 +9,13 @@ import com.someguyssoftware.fastladder.block.material.FastMaterial;
 import com.someguyssoftware.fastladder.block.material.FasterMaterial;
 import com.someguyssoftware.fastladder.block.material.FastestMaterial;
 import com.someguyssoftware.fastladder.config.FastLadderConfig;
+import com.someguyssoftware.gottschcore.block.ModBlock;
 import com.someguyssoftware.fastladder.config.FastLadderConfig;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
@@ -28,29 +30,27 @@ import net.minecraftforge.registries.IForgeRegistry;
  * @author Mark Gottschling on Jul 15, 2017
  *
  */
-// NOTE not sure that @ObjectHolder is necessary here are the blocks are set on intialization
-@ObjectHolder(FastLadder.MODID)
-public class ModBlocks {
+public class FastLadderBlocks {
 	// materials
-	public static Material FAST_MATERIAL = new FastMaterial(MapColor.AIR);
-	public static Material FASTER_MATERIAL = new FasterMaterial(MapColor.GOLD);
-	public static Material FASTEST_MATERIAL = new FastestMaterial(MapColor.DIAMOND);
+	public static final Material FAST_MATERIAL = new FastMaterial(MapColor.AIR);
+	public static final Material FASTER_MATERIAL = new FasterMaterial(MapColor.GOLD);
+	public static final Material FASTEST_MATERIAL = new FastestMaterial(MapColor.DIAMOND);
 
 	// blocks
-	public static Block FAST_LADDER = new FastLadderBlock()
-			.setHardness(0.6F)
-			.setUnlocalizedName(((FastLadderConfig)FastLadder.instance.getConfig()).getFastLadderBlockId())
-			.setRegistryName(((FastLadderConfig)FastLadder.instance.getConfig()).getFastLadderBlockId());
+	public static final Block FAST_LADDER = new FastLadderBlock(FastLadder.MODID, FastLadderConfig.fastLadderBlockId, FAST_MATERIAL)
+			.setHardness(0.6F);
+//			.setUnlocalizedName(((FastLadderConfig)FastLadder.instance.getConfig()).getFastLadderBlockId())
+//			.setRegistryName(((FastLadderConfig)FastLadder.instance.getConfig()).getFastLadderBlockId());
 	
-	public static Block FASTER_LADDER = new FastLadderBlock(FASTER_MATERIAL)
-			.setHardness(0.4F)
-			.setUnlocalizedName(((FastLadderConfig)FastLadder.instance.getConfig()).getFasterLadderBlockId())
-			.setRegistryName(((FastLadderConfig)FastLadder.instance.getConfig()).getFasterLadderBlockId());
+	public static final Block FASTER_LADDER = new FastLadderBlock(FastLadder.MODID, FastLadderConfig.fasterLadderBlockId, FASTER_MATERIAL)
+			.setHardness(0.4F);
+//			.setUnlocalizedName(((FastLadderConfig)FastLadder.instance.getConfig()).getFasterLadderBlockId())
+//			.setRegistryName(((FastLadderConfig)FastLadder.instance.getConfig()).getFasterLadderBlockId());
 	
-	public static Block FASTEST_LADDER = new FastLadderBlock(FASTEST_MATERIAL)
-			.setHardness(0.8F)
-			.setUnlocalizedName(((FastLadderConfig)FastLadder.instance.getConfig()).getFastestLadderBlockId())
-			.setRegistryName(((FastLadderConfig)FastLadder.instance.getConfig()).getFastestLadderBlockId());
+	public static final Block FASTEST_LADDER = new FastLadderBlock(FastLadder.MODID, FastLadderConfig.fastestLadderBlockId, FASTEST_MATERIAL)
+			.setHardness(0.8F);
+//			.setUnlocalizedName(((FastLadderConfig)FastLadder.instance.getConfig()).getFastestLadderBlockId())
+//			.setRegistryName(((FastLadderConfig)FastLadder.instance.getConfig()).getFastestLadderBlockId());
 
 	
 	@Mod.EventBusSubscriber(modid = FastLadder.MODID)

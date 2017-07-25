@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import com.someguyssoftware.fastladder.FastLadder;
+import com.someguyssoftware.gottschcore.block.ModBlock;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
@@ -32,7 +33,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * @author Mark Gottschling on Jan 2, 2016
  *
  */
-public class FastLadderBlock extends Block {
+public class FastLadderBlock extends ModBlock {
 
 	//public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
     public static final PropertyDirection FACING = BlockHorizontal.FACING;
@@ -44,27 +45,29 @@ public class FastLadderBlock extends Block {
 	/**
 	 * 
 	 */
-	public FastLadderBlock() {
+	public FastLadderBlock(String modID, String name) {
 		// call the super with the material
-		super(ModBlocks.FAST_MATERIAL);
+		super(modID, name, FastLadderBlocks.FAST_MATERIAL);
 		// set the default direction to north
 		setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
 		// add to the creative tab
 		this.setCreativeTab(CreativeTabs.MISC);
 		this.setSoundType(SoundType.LADDER);
+		this.setNormalCube(false);
 	}
 	
 	/**
 	 * 
 	 * @param material
 	 */
-	public FastLadderBlock(Material material) {
-		super(material);
+	public FastLadderBlock(String modID, String name, Material material) {
+		super(modID, name, material);
 		// set the default direction to north
 		setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
 		// add to the creative tab
 		this.setCreativeTab(CreativeTabs.MISC);
 		this.setSoundType(SoundType.LADDER);
+		this.setNormalCube(false);
 	}
 
 	/**
@@ -239,10 +242,10 @@ public class FastLadderBlock extends Block {
     /**
      * 
      */
-    @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
-    }
+//    @Override
+//    public boolean isFullCube(IBlockState state) {
+//        return false;
+//    }
     
     /**
      * 

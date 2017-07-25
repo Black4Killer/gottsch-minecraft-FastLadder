@@ -4,7 +4,7 @@
 package com.someguyssoftware.fastladder.proxy;
 
 import com.someguyssoftware.fastladder.FastLadder;
-import com.someguyssoftware.fastladder.block.ModBlocks;
+import com.someguyssoftware.fastladder.block.FastLadderBlocks;
 import com.someguyssoftware.fastladder.config.FastLadderConfig;
 import com.someguyssoftware.gottschcore.config.IConfig;
 import com.someguyssoftware.gottschcore.proxy.AbstractClientProxy;
@@ -31,9 +31,9 @@ public class ClientProxy extends AbstractClientProxy {
 	 */
 	public void registerItemRenderers(FastLadderConfig config) {
 		// register item renderers
-		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(ModBlocks.FAST_LADDER), 0, new ModelResourceLocation(FastLadder.MODID + ":" + config.getFastLadderBlockId(), "inventory"));
-		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(ModBlocks.FASTER_LADDER), 0, new ModelResourceLocation(FastLadder.MODID + ":" + config.getFasterLadderBlockId(), "inventory"));
-		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(ModBlocks.FASTEST_LADDER), 0, new ModelResourceLocation(FastLadder.MODID + ":" + config.getFastestLadderBlockId(), "inventory"));
+		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(FastLadderBlocks.FAST_LADDER), 0, new ModelResourceLocation(FastLadder.MODID + ":" + config.getFastLadderBlockId(), "inventory"));
+		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(FastLadderBlocks.FASTER_LADDER), 0, new ModelResourceLocation(FastLadder.MODID + ":" + config.getFasterLadderBlockId(), "inventory"));
+		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(FastLadderBlocks.FASTEST_LADDER), 0, new ModelResourceLocation(FastLadder.MODID + ":" + config.getFastestLadderBlockId(), "inventory"));
 
 	}
 }
