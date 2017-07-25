@@ -46,7 +46,7 @@ public class FastLadderBlock extends Block {
 	 */
 	public FastLadderBlock() {
 		// call the super with the material
-		super(ModBlocks.FAST_MATERIAL);
+		super(FastLadderBlocks.FAST_MATERIAL);
 		// set the default direction to north
 		setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
 		// add to the creative tab
