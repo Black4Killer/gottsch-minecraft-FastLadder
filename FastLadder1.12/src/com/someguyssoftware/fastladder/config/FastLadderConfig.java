@@ -20,6 +20,7 @@ public class FastLadderConfig extends AbstractConfig {
 	public static String fastLadderBlockId;
 	public static String fasterLadderBlockId;
 	public static String fastestLadderBlockId;
+	public static String teleportLadderContraptionBlockID; // TODO start converting all Id to ID.
 	
 	/**
 	 * 
@@ -48,6 +49,7 @@ public class FastLadderConfig extends AbstractConfig {
         fastLadderBlockId = config.getString("fastLadderBlockId", "99-ids", "fast_ladder", "");
         fasterLadderBlockId = config.getString("fasterLadderBlockId", "99-ids", "faster_ladder", "");
         fastestLadderBlockId = config.getString("fastestLadderBlockId", "99-ids", "fastest_ladder", "");
+        teleportLadderContraptionBlockID = config.getString("teleportLadderContraptionBlockID", "99-ids", "teleport_ladder_contraption", "");
         
         // the the default values
        if(config.hasChanged()) {

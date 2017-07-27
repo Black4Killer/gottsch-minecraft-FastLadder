@@ -39,19 +39,16 @@ public class FastLadderBlocks {
 	// blocks
 	public static final Block FAST_LADDER = new FastLadderBlock(FastLadder.MODID, FastLadderConfig.fastLadderBlockId, FAST_MATERIAL)
 			.setHardness(0.6F);
-//			.setUnlocalizedName(((FastLadderConfig)FastLadder.instance.getConfig()).getFastLadderBlockId())
-//			.setRegistryName(((FastLadderConfig)FastLadder.instance.getConfig()).getFastLadderBlockId());
-	
+
 	public static final Block FASTER_LADDER = new FastLadderBlock(FastLadder.MODID, FastLadderConfig.fasterLadderBlockId, FASTER_MATERIAL)
 			.setHardness(0.4F);
-//			.setUnlocalizedName(((FastLadderConfig)FastLadder.instance.getConfig()).getFasterLadderBlockId())
-//			.setRegistryName(((FastLadderConfig)FastLadder.instance.getConfig()).getFasterLadderBlockId());
 	
 	public static final Block FASTEST_LADDER = new FastLadderBlock(FastLadder.MODID, FastLadderConfig.fastestLadderBlockId, FASTEST_MATERIAL)
 			.setHardness(0.8F);
-//			.setUnlocalizedName(((FastLadderConfig)FastLadder.instance.getConfig()).getFastestLadderBlockId())
-//			.setRegistryName(((FastLadderConfig)FastLadder.instance.getConfig()).getFastestLadderBlockId());
 
+	public static final Block TELEPORT_LADDER_CONTRAPTION = 
+			new TeleportLadderContraptionBlock(FastLadder.MODID, FastLadderConfig.teleportLadderContraptionBlockID)
+				.setCreativeTab(CreativeTabs.MISC);
 	
 	@Mod.EventBusSubscriber(modid = FastLadder.MODID)
 	public static class RegistrationHandler {
@@ -69,7 +66,8 @@ public class FastLadderBlocks {
 			final Block[] blocks = {
 					FAST_LADDER,
 					FASTER_LADDER,
-					FASTEST_LADDER
+					FASTEST_LADDER,
+					TELEPORT_LADDER_CONTRAPTION
 			};
 			registry.registerAll(blocks);			
 		}
@@ -86,7 +84,8 @@ public class FastLadderBlocks {
 			final ItemBlock[] items = {
 					new ItemBlock(FAST_LADDER),
 					new ItemBlock(FASTER_LADDER),
-					new ItemBlock(FASTEST_LADDER)
+					new ItemBlock(FASTEST_LADDER),
+					new ItemBlock(TELEPORT_LADDER_CONTRAPTION)
 			};
 			
 			for (final ItemBlock item : items) {
