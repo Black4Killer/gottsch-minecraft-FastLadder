@@ -11,16 +11,21 @@ import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -34,7 +39,10 @@ import net.minecraft.world.World;
  */
 public class TeleportLadderContraptionBlock extends BlockContainer {
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
+	public static final PropertyEnum<Link> LINK = PropertyEnum.create("link", Link.class);
+	public static final PropertyEnum<Charge> CHARGE = PropertyEnum.create("charge", Charge.class);
 
+			
 	// custom bounding boxes for the different directions the block faces.
     protected static final AxisAlignedBB NORTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.875D, 1.0D, 1.0D, 1.0D);
     protected static final AxisAlignedBB SOUTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 0.125D);
@@ -47,6 +55,11 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
 	public TeleportLadderContraptionBlock(String modID, String name) {
 		super(Material.IRON);
 		setBlockName(modID, name);
+		this.setDefaultState(this.blockState
+				.getBaseState()
+				.withProperty(FACING, EnumFacing.NORTH)
+				.withProperty(LINK, Link.UNLINKED)
+				.withProperty(CHARGE, Charge.UNCHARGED));
 	}
 	
 	/**
@@ -56,6 +69,11 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
 	public TeleportLadderContraptionBlock(String modID, String name, Material material) {
 		super(material);
 		setBlockName(modID, name);
+		this.setDefaultState(this.blockState
+				.getBaseState()
+				.withProperty(FACING, EnumFacing.NORTH)
+				.withProperty(LINK, Link.UNLINKED)
+				.withProperty(CHARGE, Charge.UNCHARGED));
 	}
 
 	/**
@@ -66,8 +84,16 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
 	public void setBlockName(String modID, String name) {
 		setRegistryName(modID, name);
 		setUnlocalizedName(getRegistryName().toString());
+		
 	}
 	
+	/**
+	 * 
+	 */
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, new IProperty[] {FACING, LINK, CHARGE});
+    }
+    
 	/**
 	 * 
 	 */
@@ -75,7 +101,7 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
 		return new TeleportLadderContraptionTileEntity();
 	}
-
+    
     /**
      * Called by ItemBlocks just before a block is actually set in the world, to allow for adjustments to the
      * IBlockstate
@@ -152,6 +178,25 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
 	}
 	
     /**
+     * Called when the block is right clicked by a player.
+     */
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if (worldIn.isRemote) {
+            return true;
+        }
+        else {
+            TileEntity tileentity = worldIn.getTileEntity(pos);
+
+            if (tileentity instanceof TileEntityFurnace) {
+                playerIn.displayGUIChest((TileEntityFurnace)tileentity);
+//                playerIn.addStat(StatList.FURNACE_INTERACTION);
+            }
+
+            return true;
+        }
+    }
+    
+    /**
      * Called serverside after this block is replaced with another in Chunk, but before the Tile Entity is updated
      */
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
@@ -182,8 +227,7 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
      * 
      */
     public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
-//        return new ItemStack(FastLadderBlocks.TELEPORT_LADDER_CONTRAPTION);
-    	return null;
+        return new ItemStack(FastLadderBlocks.TELEPORT_LADDER_CONTRAPTION);
     }
     
     /**
@@ -198,17 +242,27 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
      * Convert the given metadata into a BlockState for this Block
      */
     public IBlockState getStateFromMeta(int meta) {
-        EnumFacing enumfacing = EnumFacing.getFront(meta);
-        if (enumfacing.getAxis() == EnumFacing.Axis.Y) {
-            enumfacing = EnumFacing.NORTH;        }
-        return this.getDefaultState().withProperty(FACING, enumfacing);
+        IBlockState state = this.getDefaultState().withProperty(LINK, (meta & 4) != 0 ? Link.LINKED : Link.UNLINKED);
+        state.withProperty(CHARGE, (meta & 8) != 0 ? Charge.CHARGED : Charge.UNCHARGED);
+        state.withProperty(FACING, EnumFacing.getHorizontal(meta & 3));
+        return state;
     }
 
     /**
      * Convert the BlockState into the correct metadata value
      */
     public int getMetaFromState(IBlockState state) {
-        return ((EnumFacing)state.getValue(FACING)).getIndex();
+    	int meta = 0;
+    	if (state.getValue(LINK) == Link.LINKED) {
+    		meta |= 4;
+    	}
+
+    	if (state.getValue(CHARGE) == Charge.CHARGED) {
+    		meta |= 8;
+    	}
+    	meta = meta | ((EnumFacing)state.getValue(FACING)).getHorizontalIndex();
+    	
+    	return meta;
     }
 
     /**
@@ -227,7 +281,68 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
         return state.withRotation(mirrorIn.toRotation((EnumFacing)state.getValue(FACING)));
     }
 
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[] {FACING});
-    }
+    /**
+     * 
+     * @author Mark Gottschling on Jul 27, 2017
+     *
+     */
+	public static enum Link implements IStringSerializable {
+		// TODO may have to add index values so the meta <--> property can be easily determined.
+		UNLINKED("unlinked", 0),
+		LINKED("linked", 1);
+
+	    private final String name;
+	    private final int value;
+	    
+	    private Link(String name, int value) {
+	        this.name = name;
+	        this.value = value;
+	    }
+	
+	    @Override
+		public String toString() {
+	        return this.name;
+	    }
+	
+	    @Override
+		public String getName() {
+	        return this.name;
+	    }
+
+		public int getValue() {
+			return value;
+		}
+	}
+	
+	/**
+	 * 
+	 * @author Mark Gottschling on Jul 28, 2017
+	 *
+	 */
+	public static enum Charge implements IStringSerializable {
+		UNCHARGED("uncharged", 0),
+		CHARGED("charged", 1);
+
+	    private final String name;
+	    private final int value;
+	
+	    private Charge(String name, int value) {
+	        this.name = name;
+	        this.value = value;
+	    }
+	
+	    @Override
+		public String toString() {
+	        return this.name;
+	    }
+	
+	    @Override
+		public String getName() {
+	        return this.name;
+	    }
+
+		public int getValue() {
+			return value;
+		}
+	}
 }

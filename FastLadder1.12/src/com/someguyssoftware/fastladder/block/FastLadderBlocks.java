@@ -37,13 +37,13 @@ public class FastLadderBlocks {
 	public static final Material FASTEST_MATERIAL = new FastestMaterial(MapColor.DIAMOND);
 
 	// blocks
-	public static final Block FAST_LADDER = new FastLadderBlock(FastLadder.MODID, FastLadderConfig.fastLadderBlockId, FAST_MATERIAL)
+	public static final Block FAST_LADDER = new FastLadderBlock(FastLadder.MODID, FastLadderConfig.fastLadderBlockID, FAST_MATERIAL)
 			.setHardness(0.6F);
 
-	public static final Block FASTER_LADDER = new FastLadderBlock(FastLadder.MODID, FastLadderConfig.fasterLadderBlockId, FASTER_MATERIAL)
+	public static final Block FASTER_LADDER = new FastLadderBlock(FastLadder.MODID, FastLadderConfig.fasterLadderBlockID, FASTER_MATERIAL)
 			.setHardness(0.4F);
 	
-	public static final Block FASTEST_LADDER = new FastLadderBlock(FastLadder.MODID, FastLadderConfig.fastestLadderBlockId, FASTEST_MATERIAL)
+	public static final Block FASTEST_LADDER = new FastLadderBlock(FastLadder.MODID, FastLadderConfig.fastestLadderBlockID, FASTEST_MATERIAL)
 			.setHardness(0.8F);
 
 	public static final Block TELEPORT_LADDER_CONTRAPTION = 

@@ -17,10 +17,10 @@ import net.minecraftforge.common.config.Configuration;
  */
 public class FastLadderConfig extends AbstractConfig {
 	// ids
-	public static String fastLadderBlockId;
-	public static String fasterLadderBlockId;
-	public static String fastestLadderBlockId;
-	public static String teleportLadderContraptionBlockID; // TODO start converting all Id to ID.
+	public static String fastLadderBlockID;
+	public static String fasterLadderBlockID;
+	public static String fastestLadderBlockID;
+	public static String teleportLadderContraptionBlockID;
 	
 	/**
 	 * 
@@ -46,9 +46,9 @@ public class FastLadderConfig extends AbstractConfig {
               
         // ids
         config.setCategoryComment("99-ids", "ID properties.");
-        fastLadderBlockId = config.getString("fastLadderBlockId", "99-ids", "fast_ladder", "");
-        fasterLadderBlockId = config.getString("fasterLadderBlockId", "99-ids", "faster_ladder", "");
-        fastestLadderBlockId = config.getString("fastestLadderBlockId", "99-ids", "fastest_ladder", "");
+        fastLadderBlockID = config.getString("fastLadderBlockId", "99-ids", "fast_ladder", "");
+        fasterLadderBlockID = config.getString("fasterLadderBlockID", "99-ids", "faster_ladder", "");
+        fastestLadderBlockID = config.getString("fastestLadderBlockID", "99-ids", "fastest_ladder", "");
         teleportLadderContraptionBlockID = config.getString("teleportLadderContraptionBlockID", "99-ids", "teleport_ladder_contraption", "");
         
         // the the default values
@@ -59,18 +59,18 @@ public class FastLadderConfig extends AbstractConfig {
 		return config;		
 	}
 
-	public String getFastLadderBlockId() {
-		return FastLadderConfig.fastLadderBlockId;
+	public String getFastLadderBlockID() {
+		return FastLadderConfig.fastLadderBlockID;
 	}
 
 
-	public String getFasterLadderBlockId() {
-		return FastLadderConfig.fasterLadderBlockId;
+	public String getFasterLadderBlockID() {
+		return FastLadderConfig.fasterLadderBlockID;
 	}
 
 
-	public String getFastestLadderBlockId() {
-		return FastLadderConfig.fastestLadderBlockId;
+	public String getFastestLadderBlockID() {
+		return FastLadderConfig.fastestLadderBlockID;
 	}
 
 }
