@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+	"i i",
+	"sxs",
+	"i i"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "s": {
+    	"item": "minecraft:stick"
+    },
+	"x": {
+		"item": "minecraft:glowstone_dust"
+	}
+  },
+  "result": {
+    "item": "fastladder:fast_ladder",
+    "count": 6
+  }
+}

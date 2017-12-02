@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+	"d d",
+	"sxs",
+	"d d"
+  ],
+  "key": {
+    "d": {
+      "item": "minecraft:diamond"
+    },
+    "s": {
+    	"item": "minecraft:stick"
+    },
+	"x": {
+		"item": "minecraft:glowstone_dust"
+	}
+  },
+  "result": {
+    "item": "fastladder:fastest_ladder",
+    "count": 32    
+  }
+}
