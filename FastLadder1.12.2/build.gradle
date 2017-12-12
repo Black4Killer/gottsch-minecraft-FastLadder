@@ -50,8 +50,9 @@ sourceSets.main{
 	}
 }
 
+def gottschcore_path="../../gottsch-minecraft-GottschCore/GottschCore${mc_version}/build/libs/GottschCore-mc${mc_version}-v${gottschcore_version}.jar"
 dependencies {
-	compile files('../../gottsch-minecraft-GottschCore/GottschCore1.12/build/libs/GottschCore-mc1.12.2-v1.1.2.jar')
+	compile files(gottschcore_path)
 }
 
 processResources
@@ -74,11 +75,11 @@ processResources
     }
 }
 
-task packageJavadoc(type: Jar, dependsOn: 'javadoc') {
-    from javadoc.destinationDir
-    classifier = 'javadoc'
-}
+//task packageJavadoc(type: Jar, dependsOn: 'javadoc') {
+//    from javadoc.destinationDir
+//    classifier = 'javadoc'
+//}
 
-artifacts {
-    archives packageJavadoc
-}
+//artifacts {
+//    archives packageJavadoc
+//}

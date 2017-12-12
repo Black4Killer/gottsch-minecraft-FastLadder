@@ -58,6 +58,8 @@ public class FastLadderBlock extends ModBlock {
 	
 	/**
 	 * 
+	 * @param modID
+	 * @param name
 	 * @param material
 	 */
 	public FastLadderBlock(String modID, String name, Material material) {
