@@ -34,15 +34,13 @@ import net.minecraft.world.World;
 
 /**
  * 
- * @author Mark Gottschling on Jul 25, 2017
+ * @author Mark Gottschling on Dec 12, 2017
  *
  */
-@Deprecated
-public class TeleportLadderContraptionBlock extends BlockContainer {
+//class TeleportLadderBlock extends BlockContainer {
+class TeleportLadderBlock extends BlockContainer {
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
 	public static final PropertyEnum<Link> LINK = PropertyEnum.create("link", Link.class);
-	public static final PropertyEnum<Charge> CHARGE = PropertyEnum.create("charge", Charge.class);
-
 			
 	// custom bounding boxes for the different directions the block faces.
     protected static final AxisAlignedBB NORTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.875D, 1.0D, 1.0D, 1.0D);
@@ -53,30 +51,43 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
 	/**
 	 * 
 	 */
-	public TeleportLadderContraptionBlock(String modID, String name) {
+	public TeleportLadderBlock(String modID, String name) {
 		super(Material.IRON);
 		setBlockName(modID, name);
 		this.setDefaultState(this.blockState
 				.getBaseState()
 				.withProperty(FACING, EnumFacing.NORTH)
-				.withProperty(LINK, Link.UNLINKED)
-				.withProperty(CHARGE, Charge.UNCHARGED));
+				.withProperty(LINK, Link.UNLINKED));
 	}
 	
 	/**
 	 * 
 	 * @param material
 	 */
-	public TeleportLadderContraptionBlock(String modID, String name, Material material) {
+	public TeleportLadderBlock(String modID, String name, Material material) {
 		super(material);
 		setBlockName(modID, name);
 		this.setDefaultState(this.blockState
 				.getBaseState()
 				.withProperty(FACING, EnumFacing.NORTH)
-				.withProperty(LINK, Link.UNLINKED)
-				.withProperty(CHARGE, Charge.UNCHARGED));
+				.withProperty(LINK, Link.UNLINKED));
 	}
 
+	// TODO
+	public boolean hasFuel() {
+		return false;
+	}
+	
+	// TODO
+	public void removeFuel(int count) {
+		
+	}
+	
+	// TODO
+	public void addFuel(int count) {
+		
+	}
+	
 	/**
 	 * 
 	 * @param modID
@@ -92,7 +103,7 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
 	 * 
 	 */
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[] {FACING, LINK, CHARGE});
+        return new BlockStateContainer(this, new IProperty[] {FACING, LINK});
     }
     
 	/**
@@ -100,7 +111,7 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
 	 */
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return new TeleportLadderContraptionTileEntity();
+		return new TeleportLadderTileEntity();
 	}
     
     /**
@@ -134,7 +145,7 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
         ICoords coords = thisCoords.up(1);
         
         while (coords.getY() < world.getHeight() && !foundTeleportLadder) {
-        	if (isUnlinkedContraptionOrPad(world, coords)) {
+        	if (isUnlinkedTeleportLadder(world, coords)) {
         		foundTeleportLadder = true;
         	}
         	else {        		
@@ -144,7 +155,7 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
         if (!foundTeleportLadder) {
         	coords = thisCoords.down(1);
         	while (coords.getY() > 1 && !foundTeleportLadder) {
-            	if (isUnlinkedContraptionOrPad(world, coords)) {
+            	if (isUnlinkedTeleportLadder(world, coords)) {
             		foundTeleportLadder = true;
             	}
             	else {
@@ -155,9 +166,9 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
         
         if (foundTeleportLadder) {
     		// update the linked property of the backing title entity
-    		((TeleportLadderContraptionTileEntity)world.getTileEntity(pos)).setLink(coords);
+    		((TeleportLadderTileEntity)world.getTileEntity(pos)).setLink(coords);
     		// update the discovered TeleportLadder with this coords
-    		((TeleportLadderContraptionTileEntity)world.getTileEntity(coords.toPos())).setLink(thisCoords);
+    		((TeleportLadderTileEntity)world.getTileEntity(coords.toPos())).setLink(thisCoords);
         }        
 	}
 	
@@ -167,10 +178,9 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
 	 * @param coords
 	 * @return
 	 */
-	private boolean isUnlinkedContraptionOrPad(World world, ICoords coords) {
+	private boolean isUnlinkedTeleportLadder(World world, ICoords coords) {
     	TileEntity t = world.getTileEntity(coords.toPos());
-    	if (t instanceof TeleportLadderContraptionTileEntity ||
-    			t instanceof TeleportLadderTileEntity) {
+    	if (t instanceof TeleportLadderTileEntity) {
     		// TODO check if the discovered teleport ladder is already linked (and valid link)
 
     		return true;
@@ -244,7 +254,6 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
      */
     public IBlockState getStateFromMeta(int meta) {
         IBlockState state = this.getDefaultState().withProperty(LINK, (meta & 4) != 0 ? Link.LINKED : Link.UNLINKED);
-        state.withProperty(CHARGE, (meta & 8) != 0 ? Charge.CHARGED : Charge.UNCHARGED);
         state.withProperty(FACING, EnumFacing.getHorizontal(meta & 3));
         return state;
     }
@@ -258,9 +267,6 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
     		meta |= 4;
     	}
 
-    	if (state.getValue(CHARGE) == Charge.CHARGED) {
-    		meta |= 8;
-    	}
     	meta = meta | ((EnumFacing)state.getValue(FACING)).getHorizontalIndex();
     	
     	return meta;
@@ -284,7 +290,7 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
 
     /**
      * 
-     * @author Mark Gottschling on Jul 27, 2017
+     * @author Mark Gottschling on Dec 12, 2017
      *
      */
 	public static enum Link implements IStringSerializable {
@@ -296,38 +302,6 @@ public class TeleportLadderContraptionBlock extends BlockContainer {
 	    private final int value;
 	    
 	    private Link(String name, int value) {
-	        this.name = name;
-	        this.value = value;
-	    }
-	
-	    @Override
-		public String toString() {
-	        return this.name;
-	    }
-	
-	    @Override
-		public String getName() {
-	        return this.name;
-	    }
-
-		public int getValue() {
-			return value;
-		}
-	}
-	
-	/**
-	 * 
-	 * @author Mark Gottschling on Jul 28, 2017
-	 *
-	 */
-	public static enum Charge implements IStringSerializable {
-		UNCHARGED("uncharged", 0),
-		CHARGED("charged", 1);
-
-	    private final String name;
-	    private final int value;
-	
-	    private Charge(String name, int value) {
 	        this.name = name;
 	        this.value = value;
 	    }

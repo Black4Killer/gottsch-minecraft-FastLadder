@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "FastLadder:teleport_ladder_contraption" },
+        "facing=east":  { "model": "FastLadder:teleport_ladder_contraption", "y": 90 },
+        "facing=south": { "model": "FastLadder:teleport_ladder_contraption", "y": 180 },
+        "facing=west":  { "model": "FastLadder:teleport_ladder_contraption", "y": 270 }
+    }
+}

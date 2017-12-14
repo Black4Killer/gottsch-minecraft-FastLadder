@@ -46,8 +46,12 @@ public class FastLadderBlocks {
 	public static final Block FASTEST_LADDER = new FastLadderBlock(FastLadder.MODID, FastLadderConfig.fastestLadderBlockID, FASTEST_MATERIAL)
 			.setHardness(0.8F);
 
-	public static final Block TELEPORT_LADDER_CONTRAPTION = 
-			new TeleportLadderContraptionBlock(FastLadder.MODID, FastLadderConfig.teleportLadderContraptionBlockID)
+//	public static final Block TELEPORT_LADDER_CONTRAPTION = 
+//			new TeleportLadderContraptionBlock(FastLadder.MODID, FastLadderConfig.teleportLadderContraptionBlockID)
+//				.setCreativeTab(CreativeTabs.MISC);
+	
+	public static final Block TELEPORT_LADDER = 
+			new TeleportLadderBlock(FastLadder.MODID, FastLadderConfig.teleportLadderBlockID)
 				.setCreativeTab(CreativeTabs.MISC);
 	
 	@Mod.EventBusSubscriber(modid = FastLadder.MODID)
@@ -67,7 +71,7 @@ public class FastLadderBlocks {
 					FAST_LADDER,
 					FASTER_LADDER,
 					FASTEST_LADDER,
-					TELEPORT_LADDER_CONTRAPTION
+					TELEPORT_LADDER
 			};
 			registry.registerAll(blocks);			
 		}
@@ -85,7 +89,7 @@ public class FastLadderBlocks {
 					new ItemBlock(FAST_LADDER),
 					new ItemBlock(FASTER_LADDER),
 					new ItemBlock(FASTEST_LADDER),
-					new ItemBlock(TELEPORT_LADDER_CONTRAPTION)
+					new ItemBlock(TELEPORT_LADDER)
 			};
 			
 			for (final ItemBlock item : items) {

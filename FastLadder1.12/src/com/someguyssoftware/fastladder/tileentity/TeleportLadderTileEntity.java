@@ -10,7 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IInteractionObject;
 
-public class TeleportLadderPadTileEntity extends TileEntity implements IInventory, IInteractionObject{
+public class TeleportLadderTileEntity extends TileEntity implements IInventory, IInteractionObject{
 	/*
 	 * Coordinates of the linked TeleportLadder.
 	 */
@@ -24,7 +24,7 @@ public class TeleportLadderPadTileEntity extends TileEntity implements IInventor
 	/**
 	 * 
 	 */
-	public TeleportLadderPadTileEntity() {
+	public TeleportLadderTileEntity() {
 		
 	}
 	
@@ -34,6 +34,10 @@ public class TeleportLadderPadTileEntity extends TileEntity implements IInventor
 	 */
 	public boolean isLinked() {
 		return false;
+	}
+	
+	public void setLink(ICoords coords) {
+		this.linkedTeleportLadderCoords = coords;
 	}
 	
 	/**
