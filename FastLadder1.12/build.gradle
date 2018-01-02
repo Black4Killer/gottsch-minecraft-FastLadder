@@ -74,11 +74,23 @@ processResources
     }
 }
 
-task packageJavadoc(type: Jar, dependsOn: 'javadoc') {
-    from javadoc.destinationDir
-    classifier = 'javadoc'
+// jar file that includes the build #
+version = "mc${mc_version}-f${forge_version}-v${mod_version}-${git.head().abbreviatedId}"
+jar {
+
 }
 
-artifacts {
-    archives packageJavadoc
+// set the version and name for the final compilation
+version = "mc${mc_version}-f${forge_version}-v${mod_version}"
+jar {
+
 }
+
+//task packageJavadoc(type: Jar, dependsOn: 'javadoc') {
+//    from javadoc.destinationDir
+//    classifier = 'javadoc'
+//}
+
+//artifacts {
+//    archives packageJavadoc
+//}

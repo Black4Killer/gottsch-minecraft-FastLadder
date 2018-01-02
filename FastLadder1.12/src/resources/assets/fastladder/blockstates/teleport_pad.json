@@ -1,0 +1,21 @@
+{
+/*
+    "variants": {
+        "facing=north": { "model": "FastLadder:teleport_pad" },
+        "facing=east":  { "model": "FastLadder:teleport_pad", "y": 90 },
+        "facing=south": { "model": "FastLadder:teleport_pad", "y": 180 },
+        "facing=west":  { "model": "FastLadder:teleport_pad", "y": 270 }
+    }
+    */
+      "variants": {
+        "normal": { "model": "FastLadder:teleport_pad" },
+        "facing=north,link=unlinked": { "model": "FastLadder:teleport_pad" },
+        "facing=east,link=unlinked":  { "model": "FastLadder:teleport_pad", "y": 90 },
+        "facing=south,link=unlinked": { "model": "FastLadder:teleport_pad", "y": 180 },
+        "facing=west,link=unlinked":  { "model": "FastLadder:teleport_pad", "y": 270 },
+        "facing=north,link=linked": { "model": "FastLadder:teleport_pad" },
+        "facing=east,link=linked":  { "model": "FastLadder:teleport_pad", "y": 90 },
+        "facing=south,link=linked": { "model": "FastLadder:teleport_pad", "y": 180 },
+        "facing=west,link=linked":  { "model": "FastLadder:teleport_pad", "y": 270 }
+    }
+}

@@ -1,8 +1,12 @@
 {
     "variants": {
-        "facing=north": { "model": "FastLadder:teleport_ladder_contraption" },
-        "facing=east":  { "model": "FastLadder:teleport_ladder_contraption", "y": 90 },
-        "facing=south": { "model": "FastLadder:teleport_ladder_contraption", "y": 180 },
-        "facing=west":  { "model": "FastLadder:teleport_ladder_contraption", "y": 270 }
+        "facing=north,link=unlinked": { "model": "FastLadder:teleport_ladder" },
+        "facing=east,link=unlinked":  { "model": "FastLadder:teleport_ladder", "y": 90 },
+        "facing=south,link=unlinked": { "model": "FastLadder:teleport_ladder", "y": 180 },
+        "facing=west,link=unlinked":  { "model": "FastLadder:teleport_ladder", "y": 270 },
+        "facing=north,link=linked": { "model": "FastLadder:teleport_ladder" },
+        "facing=east,link=linked":  { "model": "FastLadder:teleport_ladder", "y": 90 },
+        "facing=south,link=linked": { "model": "FastLadder:teleport_ladder", "y": 180 },
+        "facing=west,link=linked":  { "model": "FastLadder:teleport_ladder", "y": 270 }
     }
 }

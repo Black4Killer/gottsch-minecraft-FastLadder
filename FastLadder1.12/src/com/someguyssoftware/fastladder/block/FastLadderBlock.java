@@ -224,6 +224,7 @@ public class FastLadderBlock extends ModBlock {
     public IBlockState withMirror(IBlockState state, Mirror mirrorIn) {
         return state.withRotation(mirrorIn.toRotation((EnumFacing)state.getValue(FACING)));
     }
+    
     /**
      * 
      */

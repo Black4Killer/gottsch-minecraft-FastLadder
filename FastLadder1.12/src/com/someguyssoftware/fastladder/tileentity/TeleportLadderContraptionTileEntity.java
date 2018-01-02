@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IInteractionObject;
 
+@Deprecated
 public class TeleportLadderContraptionTileEntity extends TileEntity implements IInventory, IInteractionObject{
 	/*
 	 * Coordinates of the linked TeleportLadder.
