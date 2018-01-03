@@ -14,3 +14,6 @@ tile.fastladder:teleport_ladder.name=Teleport Ladder
 
 ## tabs
 #itemGroup.fast_ladder_blocks_tab=FastLadder!
+
+#containers
+container.fastladder:teleport_pad=Teleport Pad

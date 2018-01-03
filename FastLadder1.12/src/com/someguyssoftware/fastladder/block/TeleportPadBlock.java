@@ -13,9 +13,11 @@ import java.util.Random;
 import javax.annotation.Nullable;
 
 import com.someguyssoftware.fastladder.FastLadder;
+import com.someguyssoftware.fastladder.client.gui.GuiHandler;
 import com.someguyssoftware.fastladder.tileentity.TeleportPadTileEntity;
 import com.someguyssoftware.fastladder.tileentity.TeleportTransaction;
 import com.someguyssoftware.gottschcore.block.ModBlock;
+import com.someguyssoftware.gottschcore.block.ModContainerBlock;
 import com.someguyssoftware.gottschcore.positional.Coords;
 import com.someguyssoftware.gottschcore.positional.ICoords;
 
@@ -32,10 +34,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
@@ -54,7 +59,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * @author Mark Gottschling onDec 26, 2017
  *
  */
-public class TeleportPadBlock extends ModBlock {
+public class TeleportPadBlock extends ModContainerBlock {
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
 	public static final PropertyEnum<Link> LINK = PropertyEnum.create("link", Link.class);
 	
@@ -99,6 +104,9 @@ public class TeleportPadBlock extends ModBlock {
 		this.setNormalCube(false);
 	}
 	
+	/**
+	 * 
+	 */
 	@Override
 	public boolean hasTileEntity(IBlockState state) {
 		return true;
@@ -108,10 +116,22 @@ public class TeleportPadBlock extends ModBlock {
 	// Should return a new instance of the tile entity for the block
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState state) {
-		FastLadder.log.debug("Creating TeleportPad TileEntity");
+		FastLadder.log.debug("Creating TeleportPad TileEntity from createTileEntity()");
 		return new TeleportPadTileEntity();	  
 	}
 
+	/**
+	 * 
+	 * @param worldIn
+	 * @param meta
+	 * @return
+	 */
+	@Override
+	public TileEntity createNewTileEntity(World worldIn, int meta) {
+		FastLadder.log.debug("Creating TeleportPad TileEntity from createNewTileEntity()");
+		return new TeleportPadTileEntity();	  
+	}
+	
     /**
      * 
      */
@@ -444,6 +464,18 @@ public class TeleportPadBlock extends ModBlock {
         	
         	worldIn.scheduleUpdate(new BlockPos(pos), this, this.tickRate(worldIn));
         }
+    }
+    
+    /**
+     * Called when the block is right clicked by a player.
+     */
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if (worldIn.isRemote) {
+            return true;
+        }
+       
+        playerIn.openGui(FastLadder.instance, 30, worldIn, pos.getX(), pos.getY(), pos.getZ());
+		return true;
     }
     
 	/**

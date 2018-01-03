@@ -3,7 +3,7 @@
   "pattern": [
 	"ddd",
 	"ipi",
-	"ici"
+	"ifi"
   ],
   "key": {
     "i": {
@@ -15,8 +15,8 @@
 	"p": {
 		"item": "minecraft:light_weighted_pressure_plate"
 	},
-	"c": {
-		"item": "minecraft:chest"
+	"f": {
+		"item": "minecraft:furnace"
 	}
   },
   "result": {

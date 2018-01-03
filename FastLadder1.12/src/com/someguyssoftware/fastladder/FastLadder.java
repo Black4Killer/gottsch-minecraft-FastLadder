@@ -6,6 +6,7 @@ package com.someguyssoftware.fastladder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.someguyssoftware.fastladder.client.gui.GuiHandler;
 import com.someguyssoftware.fastladder.config.FastLadderConfig;
 import com.someguyssoftware.fastladder.eventhandler.PlayerEventHandler;
 import com.someguyssoftware.gottschcore.annotation.Credits;
@@ -26,6 +27,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 /**
  * 
@@ -36,7 +38,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 		modid=FastLadder.MODID,
 		name=FastLadder.NAME,
 		version=FastLadder.VERSION,
-		dependencies="required-after:gottschcore@[1.1.0,)",
+		dependencies="required-after:gottschcore@[1.2.0,)",
 		acceptedMinecraftVersions = "[1.12]",
 		updateJSON = FastLadder.UPDATE_JSON_URL
 	)
@@ -98,6 +100,9 @@ public class FastLadder extends AbstractMod {
 		
         // register the packet handlers
         //network = NetworkRegistry.INSTANCE.newSimpleChannel(FastLadder.modid);
+		
+		// register the GUI handler
+		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 
 	}
 	

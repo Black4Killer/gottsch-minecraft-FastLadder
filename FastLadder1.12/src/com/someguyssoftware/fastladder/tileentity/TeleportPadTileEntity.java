@@ -4,6 +4,7 @@
 package com.someguyssoftware.fastladder.tileentity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,12 +17,20 @@ import com.someguyssoftware.gottschcore.positional.Coords;
 import com.someguyssoftware.gottschcore.positional.ICoords;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
@@ -29,7 +38,7 @@ import net.minecraftforge.common.util.Constants;
  * @author Mark Gottschling onDec 26, 2017
  *
  */
-public class TeleportPadTileEntity extends TileEntity {
+public class TeleportPadTileEntity extends TileEntity implements IInventory {
 	/*
 	 * Coordinates of the linked TeleportLadder.
 	 */
@@ -50,6 +59,17 @@ public class TeleportPadTileEntity extends TileEntity {
 	 */
 	private Map<String, TeleportTransaction> transactions = new HashMap<>();
 	
+	// Create and initialize the items variable that will store store the items
+	private final int NUMBER_OF_SLOTS = 1;
+	private ItemStack[] itemStacks;
+	
+	/**
+	 * Empty constructor
+	 */
+	public TeleportPadTileEntity() {
+		itemStacks = new ItemStack[NUMBER_OF_SLOTS];
+		clear();
+	}
 	
 	/**
 	* This controls whether the tile entity gets replaced whenever the block state 
@@ -59,6 +79,14 @@ public class TeleportPadTileEntity extends TileEntity {
 	@Override
 	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
 		return (oldState.getBlock() != newState.getBlock());
+	}
+	
+	/**
+	 * 
+	 */
+	@Override
+	public ITextComponent getDisplayName() {
+		return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
 	}
 	
 	@Override
@@ -314,6 +342,186 @@ public class TeleportPadTileEntity extends TileEntity {
 	 */
 	public void setTransactions(Map<String, TeleportTransaction> transactions) {
 		this.transactions = transactions;
+	}
+
+	// TODO all these IInventory methods can be moved to an ModInventory abstract class
+	/**
+	 * 
+	 */
+	@Override
+	public int getSizeInventory() {
+		return getItemStacks().length;
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public boolean isEmpty() {
+		for (ItemStack itemStack : getItemStacks()) {
+			if (!itemStack.isEmpty()) {  // isEmpty()
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public ItemStack getStackInSlot(int index) {
+		return getItemStacks()[index];
+	}
+
+	/**
+	 * Removes some of the units from itemstack in the given slot, and returns as a separate itemstack
+ 	 * @param slotIndex the slot number to remove the items from
+	 * @param count the number of units to remove
+	 * @return a new itemstack containing the units removed from the slot
+	 */
+	@Override
+	public ItemStack decrStackSize(int index, int count) {
+		ItemStack itemStackInSlot = getStackInSlot(index);
+		if (itemStackInSlot.isEmpty()) return ItemStack.EMPTY;  // isEmpt();   EMPTY_ITEM
+
+		ItemStack itemStackRemoved;
+		if (itemStackInSlot.getCount() <= count) {  // getStackSize()
+			itemStackRemoved = itemStackInSlot;
+			setInventorySlotContents(index, ItemStack.EMPTY);   // EMPTY_ITEM
+		} else {
+			itemStackRemoved = itemStackInSlot.splitStack(count);
+			if (itemStackInSlot.getCount() == 0) { // getStackSize
+				setInventorySlotContents(index, ItemStack.EMPTY);   // EMPTY_ITEM
+			}
+		}
+		markDirty();
+		return itemStackRemoved;
+	}
+
+	/**
+	 * This method removes the entire contents of the given slot and returns it.
+	 * Used by containers such as crafting tables which return any items in their slots when you close the GUI
+	 * @param slotIndex
+	 * @return
+	 */
+	@Override
+	public ItemStack removeStackFromSlot(int index) {
+		ItemStack itemStack = getStackInSlot(index);
+		if (!itemStack.isEmpty()) setInventorySlotContents(index, ItemStack.EMPTY);  //isEmpty(), EMPTY_ITEM
+		return itemStack;
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public void setInventorySlotContents(int index, ItemStack stack) {
+		getItemStacks()[index] = stack;
+		if (stack.isEmpty() && stack.getCount() > getInventoryStackLimit()) { //  isEmpty(); getStackSize()
+			stack.setCount(getInventoryStackLimit());  //setStackSize
+		}
+		markDirty();
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public int getInventoryStackLimit() {
+		return 64;
+	}
+
+	/*
+	 * Return true if the given player is able to use this block. In this case it checks that
+	 * 1) the world tileentity hasn't been replaced in the meantime, and
+	 * 2) the player isn't too far away from the centre of the block(non-Javadoc)
+	 * @see net.minecraft.inventory.IInventory#isUsableByPlayer(net.minecraft.entity.player.EntityPlayer)
+	 */
+	@Override
+	public boolean isUsableByPlayer(EntityPlayer player) {
+		if (this.world.getTileEntity(this.pos) != this) return false;
+		final double X_CENTRE_OFFSET = 0.5;
+		final double Y_CENTRE_OFFSET = 0.5;
+		final double Z_CENTRE_OFFSET = 0.5;
+		final double MAXIMUM_DISTANCE_SQ = 8.0 * 8.0;
+		return player.getDistanceSq(pos.getX() + X_CENTRE_OFFSET, pos.getY() + Y_CENTRE_OFFSET, pos.getZ() + Z_CENTRE_OFFSET) < MAXIMUM_DISTANCE_SQ;
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public void openInventory(EntityPlayer player) {}
+
+	/**
+	 * 
+	 */
+	@Override
+	public void closeInventory(EntityPlayer player) {}
+
+	/*
+	 *  Return true if the given stack is allowed to go in the given slot.(non-Javadoc)
+	 * @see net.minecraft.inventory.IInventory#isItemValidForSlot(int, net.minecraft.item.ItemStack)
+	 */
+	@Override
+	public boolean isItemValidForSlot(int index, ItemStack stack) {
+		Item item = stack.getItem();
+        if (item == Items.GLOWSTONE_DUST) {
+            return true;
+        }
+        return false;
+	}
+
+	@Override
+	public int getField(int id) {
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) { }
+
+	@Override
+	public int getFieldCount() {
+		return 0;
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public void clear() {
+		Arrays.fill(itemStacks, ItemStack.EMPTY);  //empty item
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public String getName() {
+		return "container.fastladder:teleport_pad"; //"container.mbe30_inventory_basic.name";
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	public boolean hasCustomName() {
+		return false;
+	}
+
+	/**
+	 * @return the itemStacks
+	 */
+	public ItemStack[] getItemStacks() {
+		return itemStacks;
+	}
+
+	/**
+	 * @param itemStacks the itemStacks to set
+	 */
+	public void setItemStacks(ItemStack[] itemStacks) {
+		this.itemStacks = itemStacks;
 	}
 
 }
