@@ -17,10 +17,11 @@ import com.someguyssoftware.fastladder.client.gui.GuiHandler;
 import com.someguyssoftware.fastladder.tileentity.TeleportPadTileEntity;
 import com.someguyssoftware.fastladder.tileentity.TeleportTransaction;
 import com.someguyssoftware.gottschcore.block.ModBlock;
-import com.someguyssoftware.gottschcore.block.ModContainerBlock;
+import com.someguyssoftware.gottschcore.block.AbstractModContainerBlock;
 import com.someguyssoftware.gottschcore.positional.Coords;
 import com.someguyssoftware.gottschcore.positional.ICoords;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
@@ -33,6 +34,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
@@ -41,6 +43,7 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
@@ -53,20 +56,18 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
- * TODO change to a block container, with one slot dialog, only accepts glowstone
- * TODO on teleport remove one glowstone
- * TODO check on collide if it has fuel to teleport
  * @author Mark Gottschling onDec 26, 2017
  *
  */
-public class TeleportPadBlock extends ModContainerBlock {
-	public static final PropertyDirection FACING = BlockHorizontal.FACING;
+public class TeleportPadBlock extends AbstractModContainerBlock {
+//	public static final PropertyDirection FACING = BlockHorizontal.FACING;
 	public static final PropertyEnum<Link> LINK = PropertyEnum.create("link", Link.class);
+	public static final PropertyEnum<Placement> PLACEMENT = PropertyEnum.create("placement",  Placement.class);
 	
-    protected static final AxisAlignedBB NORTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D);
-    protected static final AxisAlignedBB SOUTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D);
-    protected static final AxisAlignedBB EAST_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D);
-    protected static final AxisAlignedBB WEST_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D);
+    protected static final AxisAlignedBB NORTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.125D, 1.0D);
+    protected static final AxisAlignedBB SOUTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.125D, 1.0D);
+    protected static final AxisAlignedBB EAST_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.125D, 1.0D);
+    protected static final AxisAlignedBB WEST_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.125D, 1.0D);
     
     /** This bounding box is used to check for entities in a certain area and then determine the pressed state. */
     protected static final AxisAlignedBB PAD_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.D, 1.0D, 0.125D, 1.0D);
@@ -81,9 +82,9 @@ public class TeleportPadBlock extends ModContainerBlock {
 		this.setCreativeTab(CreativeTabs.MISC);
 		this.setDefaultState(this.blockState
 				.getBaseState()
-				.withProperty(FACING, EnumFacing.NORTH)
+//				.withProperty(FACING, EnumFacing.NORTH)
+				.withProperty(PLACEMENT, Placement.BOTTOM)
 				.withProperty(LINK, Link.UNLINKED));
-//        this.setTickRandomly(true);
 		this.setNormalCube(false);
 	}
 	
@@ -98,9 +99,9 @@ public class TeleportPadBlock extends ModContainerBlock {
 		this.setCreativeTab(CreativeTabs.MISC);
 		this.setDefaultState(this.blockState
 				.getBaseState()
-				.withProperty(FACING, EnumFacing.NORTH)
+//				.withProperty(FACING, EnumFacing.NORTH)
+				.withProperty(PLACEMENT, Placement.BOTTOM)
 				.withProperty(LINK, Link.UNLINKED));
-//        this.setTickRandomly(true);	
 		this.setNormalCube(false);
 	}
 	
@@ -116,7 +117,6 @@ public class TeleportPadBlock extends ModContainerBlock {
 	// Should return a new instance of the tile entity for the block
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState state) {
-		FastLadder.log.debug("Creating TeleportPad TileEntity from createTileEntity()");
 		return new TeleportPadTileEntity();	  
 	}
 
@@ -128,7 +128,6 @@ public class TeleportPadBlock extends ModContainerBlock {
 	 */
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		FastLadder.log.debug("Creating TeleportPad TileEntity from createNewTileEntity()");
 		return new TeleportPadTileEntity();	  
 	}
 	
@@ -144,27 +143,28 @@ public class TeleportPadBlock extends ModContainerBlock {
      * Called by ItemBlocks just before a block is actually set in the world, to allow for adjustments to the
      * IBlockstate
      */
-	@Override
-    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-        return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
-    }
+//	@Override
+//    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+//        return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
+//    }
 	
 	/**
 	 * 
 	 */
 	@Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-		switch ((EnumFacing)state.getValue(FACING)) {
-		    case NORTH:
-		        return NORTH_AABB;
-		    case SOUTH:
-		        return SOUTH_AABB;
-		    case WEST:
-		        return WEST_AABB;
-		    case EAST:
-		    default:
-		        return NORTH_AABB;
-		}
+		return NORTH_AABB;
+//		switch ((EnumFacing)state.getValue(FACING)) {
+//		    case NORTH:
+//		        return NORTH_AABB;
+//		    case SOUTH:
+//		        return SOUTH_AABB;
+//		    case WEST:
+//		        return WEST_AABB;
+//		    case EAST:
+//		    default:
+//		        return NORTH_AABB;
+//		}
 	}
     
     @Nullable
@@ -218,9 +218,10 @@ public class TeleportPadBlock extends ModContainerBlock {
 		FastLadder.log.debug("Placing block...");
 
 		ICoords coords = new Coords(pos);
-
+		boolean isTop = false;
+		
 		// face the teleport ladder towards the palyer (there isn't really a front)
-        worldIn.setBlockState(pos, state.withProperty(FACING, placer.getHorizontalFacing().getOpposite()), 3);
+//        worldIn.setBlockState(pos, state.withProperty(FACING, placer.getHorizontalFacing().getOpposite()), 3);
         
         // get the backing tile entity
 		TileEntity tileEntity = worldIn.getTileEntity(pos);
@@ -234,58 +235,72 @@ public class TeleportPadBlock extends ModContainerBlock {
 	        while (targetCoords.getY() < worldIn.getHeight() && !foundTeleportLadder) {
 	        	if (isUnlinkedTeleportLadder(worldIn, targetCoords)) {
 	        		foundTeleportLadder = true;
-//	        		FastLadder.log.debug("Found it! @ " + targetCoords.toShortString());
+	        		isTop = false;
 	        	}
 	        	else {        		
 	        		targetCoords = targetCoords.up(1);
-//	        		FastLadder.log.debug("going up to:" + coords.getY());
 	        	}
 	        }
 	        
+	        // search down
 	        if (!foundTeleportLadder) {
 	        	targetCoords = coords.down(1);
 	        	while (targetCoords.getY() > 1 && !foundTeleportLadder) {
 	            	if (isUnlinkedTeleportLadder(worldIn, targetCoords)) {
 	            		foundTeleportLadder = true;
-//	            		FastLadder.log.debug("Found it! @ " + targetCoords.toShortString());
+	            		isTop = true;
 	            	}
 	            	else {
 	            		targetCoords = targetCoords.down(1);
-//	            		FastLadder.log.debug("going down to:" + coords.getY());
 	            	}
 	        	}
 	        }
 	        
 	        if (foundTeleportLadder) {
-//	        	FastLadder.log.debug("Updating the state of this block..:");
 	        	// update the block state
-	    		worldIn.setBlockState(pos, state.withProperty(LINK, Link.LINKED), 3);
+	    		if (isTop) {
+	    			worldIn.setBlockState(pos, state.withProperty(LINK, Link.LINKED).withProperty(PLACEMENT, Placement.TOP), 3);
+	    		}
+	    		else {
+	    			worldIn.setBlockState(pos, state.withProperty(LINK, Link.LINKED).withProperty(PLACEMENT, Placement.BOTTOM), 3);
+	    		}
 	 			this.setLightLevel(1.0F);
 	    		
 	    		// update the linked property of the backing title entity
-//	    		FastLadder.log.debug("Updating the TE of this block..:");
 	    		t.setLink(targetCoords);
-
-//	    		FastLadder.log.debug("Is TE1 Linked:" + t.isLinked());
-//	    		FastLadder.log.debug("TE1.link:" + t.getLink());
 	    		
 	    		// update the discovered TeleportLadder with this coords
-	    		worldIn.setBlockState(targetCoords.toPos(), state.withProperty(LINK, Link.LINKED), 2);
+	    		// get the state at target coords
+	    		IBlockState targetState = worldIn.getBlockState(targetCoords.toPos());
+	    		if (isTop) {
+	    			worldIn.setBlockState(targetCoords.toPos(), targetState.withProperty(LINK, Link.LINKED).withProperty(PLACEMENT, Placement.BOTTOM), 3);
+	    		}
+	    		else {
+	    			worldIn.setBlockState(targetCoords.toPos(), targetState.withProperty(LINK, Link.LINKED).withProperty(PLACEMENT, Placement.TOP), 3);
+	    		}
 	    		TeleportPadTileEntity te2 = ((TeleportPadTileEntity)worldIn.getTileEntity(targetCoords.toPos()));
 	    		if (te2 != null) {
 	    			te2.setLink(coords);
 	    		}
-	    		
-//	    		FastLadder.log.debug("Is TE2 Linked:" + te2.isLinked());
-//	    		FastLadder.log.debug("TE2.link:" + te2.getLink());	    		
-//	    		FastLadder.log.debug("My Pos: " + coords.toShortString());
-//	    		FastLadder.log.debug("Linked with: " + targetCoords.toShortString());
-//	    		FastLadder.log.debug("Target Linked with: " + te2.getLink().toShortString());
+	    		worldIn.getBlockState(targetCoords.toPos()).getBlock().setLightLevel(1.0F);
 	        }
 		}
 	
 	}
-
+	
+    /**
+     * Called when a neighboring block was changed and marks that this state should perform any checks during a neighbor
+     * change. Cases may include when redstone power is updated, cactus blocks popping off due to a neighboring solid
+     * block, etc.
+     */
+	@Override
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+        if (!this.canBePlacedOn(worldIn, pos.down())) {
+            this.dropBlockAsItem(worldIn, pos, state, 0);
+            worldIn.setBlockToAir(pos);
+        }
+    }
+    
     /**
      * Called serverside after this block is replaced with another in Chunk, but before the Tile Entity is updated
      */
@@ -293,11 +308,10 @@ public class TeleportPadBlock extends ModContainerBlock {
        TileEntity tileEntity = worldIn.getTileEntity(pos);
 
         if (tileEntity != null && tileEntity instanceof TeleportPadTileEntity) {
-//            InventoryHelper.dropInventoryItems(worldIn, pos, (TeleportPadTileEntity)tileentity);
+            InventoryHelper.dropInventoryItems(worldIn, pos, (TeleportPadTileEntity)tileEntity);
  
             // unlinked target teleport ladder
-            TeleportPadTileEntity t = (TeleportPadTileEntity)tileEntity;
-//        	FastLadder.log.debug("Block is linked: " + t.isLinked());          
+            TeleportPadTileEntity t = (TeleportPadTileEntity)tileEntity;    
             if (t.isLinked()) {
             	t.getCollidingPlayers().clear();
             	t.getTransactions().clear();
@@ -308,12 +322,16 @@ public class TeleportPadBlock extends ModContainerBlock {
             	if (target != null) {
             		// TODO could replace the next 3 lines with a single method resetTeleportState();
             		target.setLink(null);
-//            		target.getReceivingPlayerList().clear();
             		target.getCollidingPlayers().clear();
             		target.getTransactions().clear();
             	}
-            	worldIn.setBlockState(target.getPos(), state.withProperty(LINK, Link.UNLINKED), 2);
+            	// get the target state
+            	IBlockState targetState = worldIn.getBlockState(target.getPos());
+            	// update the target state
+            	worldIn.setBlockState(target.getPos(), targetState.withProperty(LINK, Link.UNLINKED), 3);
+            	// update the target block light level
             	worldIn.getBlockState(target.getPos()).getBlock().setLightLevel(0F);
+            	
             }
         }
         super.breakBlock(worldIn, pos, state);
@@ -351,26 +369,34 @@ public class TeleportPadBlock extends ModContainerBlock {
         		return;
         	}
         	
-        	if (t!= null && entityIn instanceof EntityPlayer) {
-//        		for (String s : t.getCollidingPlayers()) {
-//        			FastLadder.log.debug("Colliding player " + s);
-//        		}
+        	if (t!= null && entityIn instanceof EntityPlayer) {		
+
+    			
         		if (!t.getCollidingPlayers().contains(entityIn.getName())) {
 //        			FastLadder.log.debug("Not in colliding list");
-        			
-        			// add to the colliding list
-            		t.getCollidingPlayers().add(entityIn.getName());
-            		
+             		
             		TeleportTransaction trans = t.getTransactions().get(entityIn.getName()); 		
             		if (trans != null) {
 //            			FastLadder.log.debug("Found transaction" + trans);
+            			
+            			// add to the colliding list
+                		t.getCollidingPlayers().add(entityIn.getName());
+                		
                     	// schedule another update
                     	worldIn.scheduleUpdate(new BlockPos(pos), this, this.tickRate(worldIn));
             		}
             		else {
-//            			FastLadder.log.debug("No transaction");
+            			// ensure the teleporter has fuel
+            			if (!t.hasFuel()) { return; }
+            			
+            			// add to the colliding list
+                		t.getCollidingPlayers().add(entityIn.getName());
+                		
             			TeleportPadTileEntity destTE = (TeleportPadTileEntity) worldIn.getTileEntity(t.getLink().toPos());
             			if (destTE != null ) {
+            				// decrement the fuel count
+            				t.decrStackSize(TeleportPadTileEntity.FUEL_SLOT, 1);
+            				
 	            			// create a transaction
 	            			trans = new TeleportTransaction(new Coords(pos), t.getLink());
 	            			// add the transaction to both teleporters
@@ -383,7 +409,7 @@ public class TeleportPadBlock extends ModContainerBlock {
 	            			}
 	            			
 	            			// teleport
-	            			entityIn.setPositionAndUpdate(t.getLink().getX(), t.getLink().getY(), t.getLink().getZ());
+	            			entityIn.setPositionAndUpdate(t.getLink().getX() + 0.5F, t.getLink().getY(), t.getLink().getZ() + 0.5F);
             			}
             		}
         		}
@@ -473,9 +499,26 @@ public class TeleportPadBlock extends ModContainerBlock {
         if (worldIn.isRemote) {
             return true;
         }
-       
-        playerIn.openGui(FastLadder.instance, 30, worldIn, pos.getX(), pos.getY(), pos.getZ());
+        playerIn.openGui(FastLadder.instance, GuiHandler.TELEPORT_PAD_GUIID, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		return true;
+    }
+    
+    /**
+     * Add particles from the teleporter
+     */
+    @SideOnly(Side.CLIENT)
+    public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random rand) {
+        for (int i = 0; i < 3; ++i) {
+            int j = rand.nextInt(2) * 2 - 1;
+            int k = rand.nextInt(2) * 2 - 1;
+            double d0 = (double)pos.getX() + 0.5D + 0.25D * (double)j;
+            double d1 = (double)((float)pos.getY() + rand.nextFloat());
+            double d2 = (double)pos.getZ() + 0.5D + 0.25D * (double)k;
+            double d3 = (double)(rand.nextFloat() * (float)j);
+            double d4 = ((double)rand.nextFloat() - 0.5D) * 0.125D;
+            double d5 = (double)(rand.nextFloat() * (float)k);
+            worldIn.spawnParticle(EnumParticleTypes.PORTAL, d0, d1, d2, d3, d4, d5);
+        }
     }
     
 	/**
@@ -534,7 +577,7 @@ public class TeleportPadBlock extends ModContainerBlock {
 	 */
 	@Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[] {FACING, LINK});
+        return new BlockStateContainer(this, new IProperty[] {/*FACING, */LINK, PLACEMENT});
     }
     
     /**
@@ -542,8 +585,14 @@ public class TeleportPadBlock extends ModContainerBlock {
      */
 	@Override
     public IBlockState getStateFromMeta(int meta) {
-        IBlockState state = this.getDefaultState().withProperty(LINK, (meta & 4) != 0 ? Link.LINKED : Link.UNLINKED);
-        state.withProperty(FACING, EnumFacing.getHorizontal(meta & 3));
+//        IBlockState state = this.getDefaultState().withProperty(LINK, (meta & 4) != 0 ? Link.LINKED : Link.UNLINKED);
+//        state.withProperty(FACING, EnumFacing.getHorizontal(meta & 3));
+		
+      IBlockState state = this.getDefaultState().withProperty(LINK, (meta & 2) != 0 ? Link.LINKED : Link.UNLINKED);
+      state = state.withProperty(PLACEMENT, (meta & 1) != 0 ? Placement.TOP : Placement.BOTTOM);
+      
+      FastLadder.log.debug("Link state is: " + ((meta & 2) != 0 ? Link.LINKED : Link.UNLINKED + " : " + (meta&2)));
+      FastLadder.log.debug("Placement state is: " + ((meta & 1) != 0 ? Placement.TOP : Placement.BOTTOM + " : " + (meta&1)));
         return state;
     }
 
@@ -553,12 +602,18 @@ public class TeleportPadBlock extends ModContainerBlock {
 	@Override
     public int getMetaFromState(IBlockState state) {
     	int meta = 0;
-    	if (state.getValue(LINK) == Link.LINKED) {
-    		meta |= 4;
-    	}
-
-    	meta = meta | ((EnumFacing)state.getValue(FACING)).getHorizontalIndex();
     	
+//    	if (state.getValue(LINK) == Link.LINKED) {
+//    		meta |= 4;
+//    	}
+//    	meta = meta | ((EnumFacing)state.getValue(FACING)).getHorizontalIndex();
+    	
+    	FastLadder.log.debug("State value of LINK: " + state.getValue(LINK));
+    	if (state.getValue(LINK) == Link.LINKED) {
+    		meta |= 2;
+    	}
+		meta = meta | ((Placement)state.getValue(PLACEMENT)).getValue();
+	      FastLadder.log.debug("Block meta is: " + meta);
     	return meta;
     }
 
@@ -566,19 +621,19 @@ public class TeleportPadBlock extends ModContainerBlock {
      * Returns the blockstate with the given rotation from the passed blockstate. If inapplicable, returns the passed
      * blockstate.
      */
-	@Override
-    public IBlockState withRotation(IBlockState state, Rotation rot) {
-        return state.withProperty(FACING, rot.rotate((EnumFacing)state.getValue(FACING)));
-    }
+//	@Override
+//    public IBlockState withRotation(IBlockState state, Rotation rot) {
+//        return state.withProperty(FACING, rot.rotate((EnumFacing)state.getValue(FACING)));
+//    }
 
     /**
      * Returns the blockstate with the given mirror of the passed blockstate. If inapplicable, returns the passed
      * blockstate.
      */
-	@Override
-    public IBlockState withMirror(IBlockState state, Mirror mirrorIn) {
-        return state.withRotation(mirrorIn.toRotation((EnumFacing)state.getValue(FACING)));
-    }
+//	@Override
+//    public IBlockState withMirror(IBlockState state, Mirror mirrorIn) {
+//        return state.withRotation(mirrorIn.toRotation((EnumFacing)state.getValue(FACING)));
+//    }
     
 	
     /**
@@ -617,6 +672,39 @@ public class TeleportPadBlock extends ModContainerBlock {
 	        return this.name;
 	    }
 
+		public int getValue() {
+			return value;
+		}
+	}
+	
+	/**
+	 * 
+	 * @author Mark Gottschling onJan 3, 2018
+	 *
+	 */
+	public static enum Placement implements IStringSerializable {
+		// TODO may have to add index values so the meta <--> property can be easily determined.
+		BOTTOM("bottom", 0),
+		TOP("top", 1);
+
+	    private final String name;
+	    private final int value;
+	    
+	    private Placement(String name, int value) {
+	        this.name = name;
+	        this.value = value;
+	    }
+
+		/**
+		 * @return the name
+		 */
+		public String getName() {
+			return name;
+		}
+
+		/**
+		 * @return the value
+		 */
 		public int getValue() {
 			return value;
 		}

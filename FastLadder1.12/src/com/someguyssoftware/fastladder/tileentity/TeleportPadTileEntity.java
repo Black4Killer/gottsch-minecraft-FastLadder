@@ -13,8 +13,8 @@ import java.util.Map.Entry;
 import javax.annotation.Nullable;
 
 import com.someguyssoftware.fastladder.FastLadder;
-import com.someguyssoftware.gottschcore.positional.Coords;
 import com.someguyssoftware.gottschcore.positional.ICoords;
+import com.someguyssoftware.gottschcore.tileentity.AbstractModTileEntity;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,18 +36,19 @@ import net.minecraftforge.common.util.Constants;
 
 /**
  * @author Mark Gottschling onDec 26, 2017
+ * NOTE had a real issue extending AbstractModTileEntity into another abstract class and implementing IInventory,
+ * then extending that class into TeleportPadTileEntity.  Gradle kept throwing errors that TeleportPadTileEntity wasn't
+ * implementing required methods.
  *
  */
-public class TeleportPadTileEntity extends TileEntity implements IInventory {
+public class TeleportPadTileEntity extends AbstractModTileEntity implements IInventory {
+	/**/
+	public static final int FUEL_SLOT = 0;
+
 	/*
 	 * Coordinates of the linked TeleportLadder.
 	 */
 	private ICoords linkedTeleportLadderCoords;
-	
-	/*
-	 * A list of player names that are being teleported to the block.
-	 */
-//	private List<String> receivingPlayerList = new ArrayList<>();
 	
 	/*
 	 * A list of player names that are colliding with the block
@@ -67,7 +68,8 @@ public class TeleportPadTileEntity extends TileEntity implements IInventory {
 	 * Empty constructor
 	 */
 	public TeleportPadTileEntity() {
-		itemStacks = new ItemStack[NUMBER_OF_SLOTS];
+//		itemStacks = new ItemStack[NUMBER_OF_SLOTS];
+		setItemStacks(new ItemStack[NUMBER_OF_SLOTS]);
 		clear();
 	}
 	
@@ -89,45 +91,21 @@ public class TeleportPadTileEntity extends TileEntity implements IInventory {
 		return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
 	}
 	
+	/**
+	 * 
+	 */
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound parentNBT) {
 		try {
 			super.writeToNBT(parentNBT); // The super call is required to save the tiles location
-	
-			// alternatively - could use parentNBTTagCompound.setTag("ticksLeft", new NBTTagInt(ticksLeftTillDisappear));
-	
-			// some examples of other NBT tags - browse NBTTagCompound or search for the subclasses of NBTBase for more examples
-	
-			parentNBT.setString("testString", "hello World!");
-	//		parentNBT.setString("message", message);
-			
-	//		NBTTagCompound blockPosNBT = new NBTTagCompound();        // NBTTagCompound is similar to a Java HashMap
-	//		blockPosNBT.setInteger("myX", 1);
-	//		parentNBT.setTag("testBlockPos", blockPosNBT);
+
+//			parentNBT.setString("testString", "hello World!");
 			
 			if (getLink() != null) {
 				NBTTagCompound linkPosNBT = new NBTTagCompound();
-				linkPosNBT.setInteger("x", getLink().getX());
-				linkPosNBT.setInteger("y", getLink().getY());
-				linkPosNBT.setInteger("z", getLink().getZ());
-				linkPosNBT.setInteger("myX", this.getPos().getX());
-				linkPosNBT.setInteger("myY", this.getPos().getY());
-				linkPosNBT.setInteger("myZ", this.getPos().getZ());
+				linkPosNBT = getLink().writeToNBT(linkPosNBT);
 				parentNBT.setTag("link", linkPosNBT);
-
 			}
-			
-			// create a new NBTTagList to store all the individual entries
-//			if (getReceivingPlayerList() != null && getReceivingPlayerList().size() > 0) {
-//				NBTTagList tagListNBT = new NBTTagList();
-//				for (String s : getReceivingPlayerList()) {
-//					NBTTagCompound tagNBT = new NBTTagCompound();
-//					tagNBT.setString("name", s);
-//					tagListNBT.appendTag(tagNBT);
-//				}			
-//				// add the taglist to the compound
-//				parentNBT.setTag("receivingPlayerList", tagListNBT);
-//			}
 			
 			// create a new NBTTagLis to store all the colliding players
 			if (getCollidingPlayers() != null && getCollidingPlayers().size() > 0) {
@@ -145,21 +123,40 @@ public class TeleportPadTileEntity extends TileEntity implements IInventory {
 			if (getTransactions() != null && getTransactions().size() > 0) {
 				NBTTagList tagListNBT = new NBTTagList();
 				for (Entry<String, TeleportTransaction> e : getTransactions().entrySet()) {
-					NBTTagCompound tagNBT = new NBTTagCompound();
 					TeleportTransaction t = e.getValue();
-					tagNBT.setInteger("sourceX", t.getSource().getX());
-					tagNBT.setInteger("sourceY", t.getSource().getY());
-					tagNBT.setInteger("sourceZ", t.getSource().getZ());
-					tagNBT.setInteger("destX", t.getDest().getX());
-					tagNBT.setInteger("destY", t.getDest().getY());
-					tagNBT.setInteger("destZ", t.getDest().getZ());
+					// create a new tag for the transaction
+					NBTTagCompound tagNBT = new NBTTagCompound();
+
+					// create a new tag for the source coords
+					NBTTagCompound sourceNBT = new NBTTagCompound();
+					sourceNBT = t.getSource().writeToNBT(sourceNBT);
+					// create a new tag for the dest coords
+					NBTTagCompound destNBT = new NBTTagCompound();
+					destNBT = t.getDest().writeToNBT(destNBT);
+					
+					// write values to transaction tag
 					tagNBT.setString("name", e.getKey());
-					tagListNBT.appendTag(tagNBT);				
+					tagNBT.setTag("source", sourceNBT);
+					tagNBT.setTag("dest", destNBT);
+					
+					// add the tag to the list
+					tagListNBT.appendTag(tagNBT);
 				}
 				// add the taglist to the compound
 				parentNBT.setTag("transactions", tagListNBT);
 			}
 			
+			// save the inventory items
+		    NBTTagList itemsNBT = new NBTTagList();			
+		    for (int i = 0; i < this.getItemStacks().length; ++i) {
+		        if (this.getItemStacks()[i] != null) {
+		            NBTTagCompound itemTag = new NBTTagCompound();
+		            itemTag.setByte("Slot", (byte)i);
+		            this.getItemStacks()[i].writeToNBT(itemTag);
+		            itemsNBT.appendTag(itemTag);
+		        }
+		    }	
+		    parentNBT.setTag("Items", itemsNBT);			
 		}
 		catch(Exception e) {
 			FastLadder.log.error("An error writing NBT:", e);
@@ -175,45 +172,10 @@ public class TeleportPadTileEntity extends TileEntity implements IInventory {
 
 		// important rule: never trust the data you read from NBT, make sure it can't cause a crash
 
-		// some examples of other NBT tags - browse NBTTagCompound or search for the subclasses of NBTBase for more
-
-//		String readTestString = null;
-//		if (parentNBTTagCompound.hasKey("testString", 3)) {
-//			readTestString = parentNBTTagCompound.getString("testString");
-//		}
-//		String testString = "hello World!";
-//		if (!testString.equals(readTestString)) {
-//			System.err.println("testString mismatch:" + readTestString);
-//		}
-		Integer x = null;
-		Integer y = null;
-		Integer z = null;
 		if (parentNBT.hasKey("link")) {
 			NBTTagCompound linkNBT = parentNBT.getCompoundTag("link");
-	
-			if (linkNBT.hasKey("x")) {
-				x = linkNBT.getInteger("x");
-			}
-			if (linkNBT.hasKey("y")) {
-				y = linkNBT.getInteger("y");
-			}
-			if (linkNBT.hasKey("z")) {
-				z = linkNBT.getInteger("z");
-			}
-			if (x != null && y != null && z != null) {
-				ICoords link = new Coords(x, y, z);
-				this.setLink(link);
-			}
+			this.setLink(ICoords.readFromNBT(linkNBT));
 		}
-		// read the receiving player list
-//		if (parentNBT.hasKey("receivingPlayerList")) {
-//			this.getReceivingPlayerList().clear();
-//			NBTTagList list = parentNBT.getTagList("receivingPlayerList", Constants.NBT.TAG_COMPOUND);
-//			for (int i = 0; i < list.tagCount(); i++) {
-//				NBTTagCompound c = list.getCompoundTagAt(i);
-//				this.getReceivingPlayerList().add(c.getString("name"));
-//			}			
-//		}
 		
 		// read the colliding player list
 		if (parentNBT.hasKey("collidingPlayers")) {
@@ -230,51 +192,36 @@ public class TeleportPadTileEntity extends TileEntity implements IInventory {
 			NBTTagList list = parentNBT.getTagList("transactions", Constants.NBT.TAG_COMPOUND);
 			for (int i = 0; i < list.tagCount(); i++) {
 				NBTTagCompound c = list.getCompoundTagAt(i);
-				Integer sx = c.getInteger("sourceX");
-				Integer sy = c.getInteger("sourceY");
-				Integer sz = c.getInteger("sourceZ");
-
-				Integer dx = c.getInteger("destX");
-				Integer dy = c.getInteger("destY");
-				Integer dz = c.getInteger("destZ");
 				
+				NBTTagCompound source = c.getCompoundTag("source");
+				NBTTagCompound dest = c.getCompoundTag("dest");				
 				String name = c.getString("name");
+				
+				// create a transaction
 				TeleportTransaction t = new TeleportTransaction();
-				t.setSource(new Coords(sx, sy, sz));
-				t.setDest(new Coords(dx, dy, dz));
+				t.setSource(ICoords.readFromNBT(source));
+				t.setDest(ICoords.readFromNBT(dest));
+				
+				// add transaction to map, keyed by name
 				this.getTransactions().put(name, t);
 			}
 		}
-	}
-	
-	@Override
-	@Nullable
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		NBTTagCompound nbtTagCompound = new NBTTagCompound();
-		writeToNBT(nbtTagCompound);
-		int metadata = getBlockMetadata();
-		return new SPacketUpdateTileEntity(this.pos, metadata, nbtTagCompound);
-	}
+		
+		// read the inventory items
+		final byte NBT_TYPE_COMPOUND = 10;
+		// See NBTBase.createNewByType() for a listing
+		NBTTagList itemsNBT = parentNBT.getTagList("Items", NBT_TYPE_COMPOUND);
+		
+		// set all slots to empty EMPTY
+		Arrays.fill(getItemStacks(), ItemStack.EMPTY);          
+		for (int i = 0; i < itemsNBT.tagCount(); ++i) {
+			NBTTagCompound itemNBT = itemsNBT.getCompoundTagAt(i);
+			int slotIndex = itemNBT.getByte("Slot") & 255;
 
-	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.getNbtCompound());
-	}
-
-	/* Creates a tag containing the TileEntity information, used by vanilla to transmit from server to client
-	 */
-	@Override
-	public NBTTagCompound getUpdateTag() {
-		NBTTagCompound nbtTagCompound = new NBTTagCompound();
-		writeToNBT(nbtTagCompound);
-		return nbtTagCompound;
-	}
-
-	/* Populates this TileEntity with information from the tag, used by vanilla to transmit from server to client
-	 */
-	@Override
-	public void handleUpdateTag(NBTTagCompound tag) {
-		this.readFromNBT(tag);
+			if (slotIndex >= 0 && slotIndex < this.getItemStacks().length) {
+				this.getItemStacks()[slotIndex] = new ItemStack(itemNBT);
+			}
+		}
 	}
 
 	/**
@@ -301,20 +248,6 @@ public class TeleportPadTileEntity extends TileEntity implements IInventory {
 	public void setLink(ICoords link) {
 		this.linkedTeleportLadderCoords = link;
 	}
-
-//	/**
-//	 * @return the receivingPlayerList
-//	 */
-//	public List<String> getReceivingPlayerList() {
-//		return receivingPlayerList;
-//	}
-//
-//	/**
-//	 * @param receivingPlayerList the receivingPlayerList to set
-//	 */
-//	public void setReceivingPlayerList(List<String> receivingPlayerList) {
-//		this.receivingPlayerList = receivingPlayerList;
-//	}
 
 	/**
 	 * @return the collidingPlayers
@@ -344,7 +277,6 @@ public class TeleportPadTileEntity extends TileEntity implements IInventory {
 		this.transactions = transactions;
 	}
 
-	// TODO all these IInventory methods can be moved to an ModInventory abstract class
 	/**
 	 * 
 	 */
@@ -397,7 +329,7 @@ public class TeleportPadTileEntity extends TileEntity implements IInventory {
 		}
 		markDirty();
 		return itemStackRemoved;
-	}
+	}	
 
 	/**
 	 * This method removes the entire contents of the given slot and returns it.
@@ -491,7 +423,7 @@ public class TeleportPadTileEntity extends TileEntity implements IInventory {
 	 */
 	@Override
 	public void clear() {
-		Arrays.fill(itemStacks, ItemStack.EMPTY);  //empty item
+		Arrays.fill(getItemStacks(), ItemStack.EMPTY);  //empty item
 	}
 
 	/**
@@ -499,7 +431,7 @@ public class TeleportPadTileEntity extends TileEntity implements IInventory {
 	 */
 	@Override
 	public String getName() {
-		return "container.fastladder:teleport_pad"; //"container.mbe30_inventory_basic.name";
+		return "container.fastladder:teleport_pad";
 	}
 
 	/**
@@ -522,6 +454,16 @@ public class TeleportPadTileEntity extends TileEntity implements IInventory {
 	 */
 	public void setItemStacks(ItemStack[] itemStacks) {
 		this.itemStacks = itemStacks;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean hasFuel() {
+		ItemStack itemStack = this.getItemStacks()[0];
+		if (itemStack != null && itemStack != ItemStack.EMPTY && itemStack.getItem() == Items.GLOWSTONE_DUST) return true;
+		return false;
 	}
 
 }

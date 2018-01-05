@@ -22,7 +22,7 @@ import net.minecraft.util.ResourceLocation;
 public class TeleportPadGui extends GuiContainer {
 
 	// This is the resource location for the background image for the GUI
-	private static final ResourceLocation texture = new ResourceLocation(FastLadder.MODID, "textures/gui/mbe30_inventory_basic_bg.png");
+	private static final ResourceLocation texture = new ResourceLocation(FastLadder.MODID, "textures/gui/teleport_pad_inventory_bg.png");
 	private TeleportPadTileEntity tileEntity;
 
 	public TeleportPadGui(InventoryPlayer invPlayer, TeleportPadTileEntity tile) {

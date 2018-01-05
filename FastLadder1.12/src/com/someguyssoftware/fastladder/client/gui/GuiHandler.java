@@ -25,23 +25,27 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
  */
 public class GuiHandler implements IGuiHandler {
 	// TODO update these to be correct
-	private static final int GUIID_MBE_30 = 30;
-	public static int getGuiID() {return GUIID_MBE_30;}
+	public static final int TELEPORT_PAD_GUIID = 1;
+
 	
 	/* (non-Javadoc)
 	 * @see net.minecraftforge.fml.common.network.IGuiHandler#getServerGuiElement(int, net.minecraft.entity.player.EntityPlayer, net.minecraft.world.World, int, int, int)
 	 */
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		if (ID != getGuiID()) {
-			System.err.println("Invalid ID: expected " + getGuiID() + ", received " + ID);
-		}
-		
+//		if (ID != getGuiID()) {
+//			System.err.println("Invalid ID: expected " + getGuiID() + ", received " + ID);
+//		}
 		BlockPos xyz = new BlockPos(x, y, z);
 		TileEntity tileEntity = world.getTileEntity(xyz);
-		if (tileEntity instanceof TeleportPadTileEntity) {
-			TeleportPadTileEntity t = (TeleportPadTileEntity) tileEntity;
-			return new TeleportPadContainer(player.inventory, t);
+		
+		switch(ID) {
+			case TELEPORT_PAD_GUIID:
+				if (tileEntity instanceof TeleportPadTileEntity) {
+					return new TeleportPadContainer(player.inventory, (TeleportPadTileEntity) tileEntity);
+				}
+				break;
+			default: return null;
 		}
 		return null;
 	}
@@ -51,15 +55,19 @@ public class GuiHandler implements IGuiHandler {
 	 */
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		if (ID != getGuiID()) {
-			System.err.println("Invalid ID: expected " + getGuiID() + ", received " + ID);
-		}
-
+//		if (ID != getGuiID()) {
+//			System.err.println("Invalid ID: expected " + getGuiID() + ", received " + ID);
+//		}
+		
 		BlockPos xyz = new BlockPos(x, y, z);
 		TileEntity tileEntity = world.getTileEntity(xyz);
-		if (tileEntity instanceof TeleportPadTileEntity) {
-			TeleportPadTileEntity t = (TeleportPadTileEntity) tileEntity;
-			return new TeleportPadGui(player.inventory, t);
+		switch(ID) {
+			case TELEPORT_PAD_GUIID:
+				if (tileEntity instanceof TeleportPadTileEntity) {
+					return new TeleportPadGui(player.inventory, (TeleportPadTileEntity) tileEntity);
+				}
+				break;
+			default: return null;
 		}
 		return null;
 	}
