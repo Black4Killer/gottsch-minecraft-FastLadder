@@ -75,10 +75,10 @@ processResources
 }
 
 // jar file that includes the build #
-version = "mc${mc_version}-f${forge_version}-v${mod_version}-${git.head().abbreviatedId}"
-jar {
+//version = "mc${mc_version}-f${forge_version}-v${mod_version}-${git.head().abbreviatedId}"
+//jar {
 
-}
+//}
 
 // set the version and name for the final compilation
 version = "mc${mc_version}-f${forge_version}-v${mod_version}"
