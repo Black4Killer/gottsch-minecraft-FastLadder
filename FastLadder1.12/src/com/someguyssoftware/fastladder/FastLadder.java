@@ -16,7 +16,6 @@ import com.someguyssoftware.gottschcore.mod.AbstractMod;
 import com.someguyssoftware.gottschcore.mod.IMod;
 import com.someguyssoftware.gottschcore.proxy.IProxy;
 import com.someguyssoftware.gottschcore.version.BuildVersion;
-import com.someguyssoftware.gottschcore.version.VersionChecker;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -150,7 +149,7 @@ public class FastLadder extends AbstractMod {
 
 
 	@Override
-	public String getVerisionURL() {
+	public String getVersionURL() {
 		return FastLadder.VERSION_URL;
 	}
 	
@@ -185,5 +184,10 @@ public class FastLadder extends AbstractMod {
 	@Override
 	public void setModLatestVersion(BuildVersion version) {
 		FastLadder.latestVersion = version;
+	}
+
+	@Override
+	public String getUpdateURL() {
+		return FastLadder.UPDATE_JSON_URL;
 	}
 }
