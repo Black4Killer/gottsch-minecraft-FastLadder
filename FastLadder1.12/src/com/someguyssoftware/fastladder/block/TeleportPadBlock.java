@@ -215,7 +215,6 @@ public class TeleportPadBlock extends AbstractModContainerBlock {
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
 		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-		FastLadder.log.debug("Placing block...");
 
 		ICoords coords = new Coords(pos);
 		boolean isTop = false;

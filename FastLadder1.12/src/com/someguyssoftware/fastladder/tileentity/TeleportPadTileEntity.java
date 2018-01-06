@@ -68,7 +68,6 @@ public class TeleportPadTileEntity extends AbstractModTileEntity implements IInv
 	 * Empty constructor
 	 */
 	public TeleportPadTileEntity() {
-//		itemStacks = new ItemStack[NUMBER_OF_SLOTS];
 		setItemStacks(new ItemStack[NUMBER_OF_SLOTS]);
 		clear();
 	}

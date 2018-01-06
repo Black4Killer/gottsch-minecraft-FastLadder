@@ -24,7 +24,6 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
  *   IGuiHandler instance handler per mod.
  */
 public class GuiHandler implements IGuiHandler {
-	// TODO update these to be correct
 	public static final int TELEPORT_PAD_GUIID = 1;
 
 	
@@ -33,9 +32,6 @@ public class GuiHandler implements IGuiHandler {
 	 */
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-//		if (ID != getGuiID()) {
-//			System.err.println("Invalid ID: expected " + getGuiID() + ", received " + ID);
-//		}
 		BlockPos xyz = new BlockPos(x, y, z);
 		TileEntity tileEntity = world.getTileEntity(xyz);
 		
@@ -55,10 +51,6 @@ public class GuiHandler implements IGuiHandler {
 	 */
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-//		if (ID != getGuiID()) {
-//			System.err.println("Invalid ID: expected " + getGuiID() + ", received " + ID);
-//		}
-		
 		BlockPos xyz = new BlockPos(x, y, z);
 		TileEntity tileEntity = world.getTileEntity(xyz);
 		switch(ID) {

@@ -1,0 +1,14 @@
+{
+    "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
+    "parent": "FastLadder:block/base_teleport_pad",
+    "textures": {
+        "0": "blocks/furnace_side",
+        "1": "blocks/furnace_top",
+        "2": "blocks/iron_block",
+        "3": "blocks/diamond_block",
+        "4": "blocks/gold_block",
+        "5": "FastLadder:blocks/teleport_pad_indicator_bottom",
+        "6": "FastLadder:blocks/black",
+        "particle": "blocks/furnace_top"
+    }
+}

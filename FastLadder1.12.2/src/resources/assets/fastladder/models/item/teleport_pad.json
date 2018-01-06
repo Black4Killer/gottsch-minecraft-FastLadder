@@ -1,5 +1,5 @@
 {
-    "parent": "FastLadder:block/teleport_ladder_contraption",
+    "parent": "FastLadder:block/teleport_pad",
     "display": {
         "thirdperson": {
             "rotation": [ -90, -90, 0 ],
