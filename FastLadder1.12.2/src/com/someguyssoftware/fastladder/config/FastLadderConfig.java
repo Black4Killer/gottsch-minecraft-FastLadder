@@ -20,7 +20,8 @@ public class FastLadderConfig extends AbstractConfig {
 	public static String fastLadderBlockID;
 	public static String fasterLadderBlockID;
 	public static String fastestLadderBlockID;
-	public static String teleportLadderContraptionBlockID;
+	public static String teleportPadBlockID;
+	public static String teleportPadTileEntityID;
 	
 	/**
 	 * 
@@ -49,7 +50,8 @@ public class FastLadderConfig extends AbstractConfig {
         fastLadderBlockID = config.getString("fastLadderBlockId", "99-ids", "fast_ladder", "");
         fasterLadderBlockID = config.getString("fasterLadderBlockID", "99-ids", "faster_ladder", "");
         fastestLadderBlockID = config.getString("fastestLadderBlockID", "99-ids", "fastest_ladder", "");
-        teleportLadderContraptionBlockID = config.getString("teleportLadderContraptionBlockID", "99-ids", "teleport_ladder_contraption", "");
+        teleportPadBlockID = config.getString("teleportPadBlockID", "99-ids", "teleport_pad", "");
+        teleportPadTileEntityID = config.getString("teleportPadTileEntityID", "99-ids", "teleport_pad_te", "");
         
         // the the default values
        if(config.hasChanged()) {
@@ -73,4 +75,7 @@ public class FastLadderConfig extends AbstractConfig {
 		return FastLadderConfig.fastestLadderBlockID;
 	}
 
+	public String getTeleportPadBlockID() {
+		return FastLadderConfig.teleportPadBlockID;
+	}
 }

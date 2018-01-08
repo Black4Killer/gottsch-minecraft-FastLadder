@@ -8,7 +8,9 @@ import com.someguyssoftware.fastladder.FastLadder;
 import com.someguyssoftware.fastladder.block.material.FastMaterial;
 import com.someguyssoftware.fastladder.block.material.FasterMaterial;
 import com.someguyssoftware.fastladder.block.material.FastestMaterial;
+import com.someguyssoftware.fastladder.block.material.TeleportMaterial;
 import com.someguyssoftware.fastladder.config.FastLadderConfig;
+import com.someguyssoftware.fastladder.tileentity.TeleportPadTileEntity;
 import com.someguyssoftware.gottschcore.block.ModBlock;
 import com.someguyssoftware.fastladder.config.FastLadderConfig;
 
@@ -22,6 +24,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -35,6 +38,7 @@ public class FastLadderBlocks {
 	public static final Material FAST_MATERIAL = new FastMaterial(MapColor.AIR);
 	public static final Material FASTER_MATERIAL = new FasterMaterial(MapColor.GOLD);
 	public static final Material FASTEST_MATERIAL = new FastestMaterial(MapColor.DIAMOND);
+	public static final Material TELEPORT_MATERIAL = new TeleportMaterial(MapColor.EMERALD);
 
 	// blocks
 	public static final Block FAST_LADDER = new FastLadderBlock(FastLadder.MODID, FastLadderConfig.fastLadderBlockID, FAST_MATERIAL)
@@ -46,9 +50,8 @@ public class FastLadderBlocks {
 	public static final Block FASTEST_LADDER = new FastLadderBlock(FastLadder.MODID, FastLadderConfig.fastestLadderBlockID, FASTEST_MATERIAL)
 			.setHardness(0.8F);
 
-	public static final Block TELEPORT_LADDER_CONTRAPTION = 
-			new TeleportLadderContraptionBlock(FastLadder.MODID, FastLadderConfig.teleportLadderContraptionBlockID)
-				.setCreativeTab(CreativeTabs.MISC);
+	public static final Block TELEPORT_PAD = new TeleportPadBlock(FastLadder.MODID, FastLadderConfig.teleportPadBlockID, TELEPORT_MATERIAL)
+			.setHardness(1.0F);
 	
 	@Mod.EventBusSubscriber(modid = FastLadder.MODID)
 	public static class RegistrationHandler {
@@ -67,7 +70,7 @@ public class FastLadderBlocks {
 					FAST_LADDER,
 					FASTER_LADDER,
 					FASTEST_LADDER,
-					TELEPORT_LADDER_CONTRAPTION
+					TELEPORT_PAD
 			};
 			registry.registerAll(blocks);			
 		}
@@ -85,7 +88,7 @@ public class FastLadderBlocks {
 					new ItemBlock(FAST_LADDER),
 					new ItemBlock(FASTER_LADDER),
 					new ItemBlock(FASTEST_LADDER),
-					new ItemBlock(TELEPORT_LADDER_CONTRAPTION)
+					new ItemBlock(TELEPORT_PAD)
 			};
 			
 			for (final ItemBlock item : items) {
@@ -94,6 +97,9 @@ public class FastLadderBlocks {
 				registry.register(item.setRegistryName(registryName));
 				ITEM_BLOCKS.add(item);
 			}
+			
+			// register the tile entities
+			GameRegistry.registerTileEntity(TeleportPadTileEntity.class, FastLadderConfig.teleportPadTileEntityID);
 		}
 	}
 }
