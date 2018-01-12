@@ -6,6 +6,7 @@ package com.someguyssoftware.fastladder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.someguyssoftware.fastladder.client.gui.GuiHandler;
 import com.someguyssoftware.fastladder.config.FastLadderConfig;
 import com.someguyssoftware.fastladder.eventhandler.PlayerEventHandler;
 import com.someguyssoftware.gottschcore.annotation.Credits;
@@ -15,7 +16,6 @@ import com.someguyssoftware.gottschcore.mod.AbstractMod;
 import com.someguyssoftware.gottschcore.mod.IMod;
 import com.someguyssoftware.gottschcore.proxy.IProxy;
 import com.someguyssoftware.gottschcore.version.BuildVersion;
-import com.someguyssoftware.gottschcore.version.VersionChecker;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -26,6 +26,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 /**
  * 
@@ -36,7 +37,8 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 		modid=FastLadder.MODID,
 		name=FastLadder.NAME,
 		version=FastLadder.VERSION,
-		dependencies="required-after:gottschcore@[1.1.2,)",
+		dependencies="required-after:gottschcore@[1.2.0,)",
+
 		acceptedMinecraftVersions = "[1.12]",
 		updateJSON = FastLadder.UPDATE_JSON_URL
 	)
@@ -45,7 +47,8 @@ public class FastLadder extends AbstractMod {
 	// constants
 	public static final String MODID = "fastladder";
 	public static final String NAME = "FastLadder!";
-	public static final String VERSION = "1.0.8";
+	public static final String VERSION = "1.1.0";
+
 	public static final String UPDATE_JSON_URL = "https://raw.githubusercontent.com/gottsch/gottsch-minecraft-FastLadder/master/FastLadder1.12/update.json";
 	
 	// TODO create BuilderVersion that parses the minecraft forge updatejson file instead of custom format file
@@ -98,6 +101,9 @@ public class FastLadder extends AbstractMod {
 		
         // register the packet handlers
         //network = NetworkRegistry.INSTANCE.newSimpleChannel(FastLadder.modid);
+		
+		// register the GUI handler
+		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 
 	}
 	
@@ -145,7 +151,7 @@ public class FastLadder extends AbstractMod {
 
 
 	@Override
-	public String getVerisionURL() {
+	public String getVersionURL() {
 		return FastLadder.VERSION_URL;
 	}
 	
@@ -180,5 +186,10 @@ public class FastLadder extends AbstractMod {
 	@Override
 	public void setModLatestVersion(BuildVersion version) {
 		FastLadder.latestVersion = version;
+	}
+
+	@Override
+	public String getUpdateURL() {
+		return FastLadder.UPDATE_JSON_URL;
 	}
 }

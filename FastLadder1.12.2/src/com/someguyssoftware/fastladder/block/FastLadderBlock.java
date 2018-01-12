@@ -37,10 +37,11 @@ public class FastLadderBlock extends ModBlock {
 
 	//public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
     public static final PropertyDirection FACING = BlockHorizontal.FACING;
-    protected static final AxisAlignedBB LADDER_NORTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.875D, 1.0D, 1.0D, 1.0D);
-    protected static final AxisAlignedBB LADDER_SOUTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 0.125D);
-    protected static final AxisAlignedBB LADDER_EAST_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.125D, 1.0D, 1.0D);
-    protected static final AxisAlignedBB LADDER_WEST_AABB = new AxisAlignedBB(0.875D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
+    protected static final AxisAlignedBB NORTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.875D, 1.0D, 1.0D, 1.0D);
+    protected static final AxisAlignedBB SOUTH_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 0.125D);
+    protected static final AxisAlignedBB EAST_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.125D, 1.0D, 1.0D);
+    protected static final AxisAlignedBB WEST_AABB = new AxisAlignedBB(0.875D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
+
 
 	/**
 	 * 
@@ -79,14 +80,14 @@ public class FastLadderBlock extends ModBlock {
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		switch ((EnumFacing)state.getValue(FACING)) {
 		    case NORTH:
-		        return LADDER_NORTH_AABB;
+		        return NORTH_AABB;
 		    case SOUTH:
-		        return LADDER_SOUTH_AABB;
+		        return SOUTH_AABB;
 		    case WEST:
-		        return LADDER_WEST_AABB;
+		        return WEST_AABB;
 		    case EAST:
 		    default:
-		        return LADDER_EAST_AABB;
+		        return EAST_AABB;
 		}
 	}
 	

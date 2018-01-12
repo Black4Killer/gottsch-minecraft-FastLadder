@@ -4,6 +4,7 @@
 tile.fastladder:fast_ladder.name=Fast Ladder
 tile.fastladder:faster_ladder.name=Faster Ladder
 tile.fastladder:fastest_ladder.name=Fastest Ladder
+tile.fastladder:teleport_pad.name=Teleport Pad
 
 ## item names
 
@@ -13,3 +14,6 @@ tile.fastladder:fastest_ladder.name=Fastest Ladder
 
 ## tabs
 #itemGroup.fast_ladder_blocks_tab=FastLadder!
+
+#containers
+container.fastladder:teleport_pad=Teleport Pad
