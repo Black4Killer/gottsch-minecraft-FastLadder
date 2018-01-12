@@ -15,6 +15,7 @@ import net.minecraft.item.Item;
 
 /**
  * TODO remove rendering and move to another class that is registered by events
+ * 
  * @author Mark Gottschling on Jul 15, 2017
  *
  */
@@ -35,6 +36,7 @@ public class ClientProxy extends AbstractClientProxy {
 		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(FastLadderBlocks.FASTER_LADDER), 0, new ModelResourceLocation(FastLadder.MODID + ":" + config.getFasterLadderBlockID(), "inventory"));
 		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(FastLadderBlocks.FASTEST_LADDER), 0, new ModelResourceLocation(FastLadder.MODID + ":" + config.getFastestLadderBlockID(), "inventory"));
 		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(FastLadderBlocks.TELEPORT_PAD), 0, new ModelResourceLocation(FastLadder.MODID + ":" + config.getTeleportPadBlockID(), "inventory"));
+
 
 	}
 }

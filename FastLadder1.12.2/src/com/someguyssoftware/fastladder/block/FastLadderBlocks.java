@@ -11,6 +11,7 @@ import com.someguyssoftware.fastladder.block.material.FastestMaterial;
 import com.someguyssoftware.fastladder.block.material.TeleportMaterial;
 import com.someguyssoftware.fastladder.config.FastLadderConfig;
 import com.someguyssoftware.fastladder.tileentity.TeleportPadTileEntity;
+
 import com.someguyssoftware.gottschcore.block.ModBlock;
 import com.someguyssoftware.fastladder.config.FastLadderConfig;
 
@@ -25,6 +26,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -71,6 +73,7 @@ public class FastLadderBlocks {
 					FASTER_LADDER,
 					FASTEST_LADDER,
 					TELEPORT_PAD
+
 			};
 			registry.registerAll(blocks);			
 		}
@@ -97,9 +100,10 @@ public class FastLadderBlocks {
 				registry.register(item.setRegistryName(registryName));
 				ITEM_BLOCKS.add(item);
 			}
-			
+
 			// register the tile entities
 			GameRegistry.registerTileEntity(TeleportPadTileEntity.class, FastLadderConfig.teleportPadTileEntityID);
+
 		}
 	}
 }

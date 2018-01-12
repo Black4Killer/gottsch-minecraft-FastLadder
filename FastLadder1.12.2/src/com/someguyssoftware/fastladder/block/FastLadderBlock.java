@@ -42,6 +42,7 @@ public class FastLadderBlock extends ModBlock {
     protected static final AxisAlignedBB EAST_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.125D, 1.0D, 1.0D);
     protected static final AxisAlignedBB WEST_AABB = new AxisAlignedBB(0.875D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
 
+
 	/**
 	 * 
 	 */
@@ -58,6 +59,8 @@ public class FastLadderBlock extends ModBlock {
 	
 	/**
 	 * 
+	 * @param modID
+	 * @param name
 	 * @param material
 	 */
 	public FastLadderBlock(String modID, String name, Material material) {

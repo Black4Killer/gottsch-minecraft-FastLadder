@@ -6,12 +6,15 @@ tile.fastladder:faster_ladder.name=Faster Ladder
 tile.fastladder:fastest_ladder.name=Fastest Ladder
 tile.fastladder:teleport_pad.name=Teleport Pad
 
+
 ## item names
 
 ## item-block names
 
+
 #containers
 container.fastladder:teleport_pad=Teleport Pad
+
 ##entity names
 
 ## tabs
